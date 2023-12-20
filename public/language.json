@@ -1,0 +1,22 @@
+[
+  { "name": "Arabic", "native_name": "العربية" },
+  { "name": "Bengali", "native_name": "বাংলা" },
+  { "name": "Dutch", "native_name": "Nederlands" },
+  { "name": "English", "native_name": "English" },
+  { "name": "French", "native_name": "Français" },
+  { "name": "German", "native_name": "Deutsch" },
+  { "name": "Hindi", "native_name": "हिन्दी" },
+  { "name": "Italian", "native_name": "Italiano" },
+  { "name": "Japanese", "native_name": "日本語" },
+  { "name": "Korean", "native_name": "한국어" },
+  { "name": "Malay", "native_name": "Bahasa Melayu" },
+  { "name": "Mandarin Chinese", "native_name": "中文" },
+  { "name": "Portuguese", "native_name": "Português" },
+  { "name": "Russian", "native_name": "Русский" },
+  { "name": "Spanish", "native_name": "Español" },
+  { "name": "Swahili", "native_name": "Kiswahili" },
+  { "name": "Thai", "native_name": "ไทย" },
+  { "name": "Turkish", "native_name": "Türkçe" },
+  { "name": "Urdu", "native_name": "اردو" },
+  { "name": "Vietnamese", "native_name": "Tiếng Việt" }
+]
