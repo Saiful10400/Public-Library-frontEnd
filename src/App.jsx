@@ -32,6 +32,10 @@ const App = () => {
     console.log((file.size/1048576).toFixed(2))
 
   }
+
+  (function(){
+    console.log("hello world")
+  })
   return (
     <div>
       <div className="w-full h-[40vh] flex justify-center items-center">
