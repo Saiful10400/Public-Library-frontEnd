@@ -6,12 +6,11 @@ const useImgUpload = () => {
     const imgbbUrl=`https://api.imgbb.com/1/upload?key=f09b4cd75a27b305820113fddc126a37`
 
     const data=new FormData()
-    data.append("img",file)
+    data.append("image",file)
  
-    let returnData=
-    fetch(imgbbUrl,{method:"POST",body:data})
-    .then(res=>res.json()).then(result=>returnData=result)
-    return returnData
+   
+   return fetch(imgbbUrl,{method:"POST",body:data})
+    
   }
   return imgbb
 };

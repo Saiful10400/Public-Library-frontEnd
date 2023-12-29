@@ -6,6 +6,8 @@ import UserDashboardRoot from "./Components/Other/UserDashboard/UserDashboardRoo
 import UpdateProfile from "./Components/Other/UserDashboard/components/UpdateProfile";
 import AddABook from "./Components/Other/UserDashboard/components/AddABook";
 import PdfView from "./PdfView";
+import Login from "./Components/Other/Login & registration/Login";
+import Signup from "./Components/Other/Login & registration/Signup";
 
 
 
@@ -17,12 +19,16 @@ export const router=createBrowserRouter([
         children:[
             {
                 path:"/",
-                element:<PdfView></PdfView>
+                element:<Home></Home>
             },
-            // {
-            //     path:"/",
-            //     element:<Home></Home>
-            // },
+            {
+                path:"/login",
+                element:<Login></Login>
+            },
+            {
+                path:"/signup",
+                element:<Signup></Signup>
+            },
             {
                 path:"/User_dashboard",
                 element:<UserDashboardRoot></UserDashboardRoot>,

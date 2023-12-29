@@ -5,7 +5,8 @@ import useAxiosPublic from "../../../custom Hooks/useAxiosPublic";
 import { toast } from "react-toastify";
 import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
-export const configTost={
+import useImgUpload from "../../../custom Hooks/useImgUpload";
+export const configTost = {
   position: "top-center",
   autoClose: 5000,
   hideProgressBar: false,
@@ -14,12 +15,12 @@ export const configTost={
   draggable: true,
   progress: undefined,
   theme: "light",
-  }
+};
 // input styles.
 export const inputStyle =
   "w-full py-[12px] px-[10px] text-sm font-medium focus:outline-none border text-black";
 const AddABook = () => {
-  const move=useNavigate()
+  const move = useNavigate();
   const axiosPublic = useAxiosPublic();
   const [country, setCountry] = useState([]);
   const [author, setAuthor] = useState([]);
@@ -45,16 +46,11 @@ const AddABook = () => {
     axiosPublic.get("/catagoryes").then((res) => setCatagory(res.data[0]));
   }, [axiosPublic, reload]);
 
-
-
-
-  // post new author.
+  //................ post new author.
   const addNewAuthor = (e) => {
     e.preventDefault();
     document.getElementById("my_modal_3").showModal();
   };
-
-
 
   // form submittion handle.
   const formHandle = (e) => {
@@ -62,38 +58,64 @@ const AddABook = () => {
     console.log("form cum");
   };
   // modal form handle.
+  const imgbb=useImgUpload()
+  const [authorImg, setauthroImg] = useState(null);
   const modalFormHandle = (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.authorBanglaName.value;
     const englishName = form.authorEnglishName.value;
-    const url = form.authorImgUrl.value;
     const details = form.authorAbout.value;
-    axiosPublic
+
+
+
+    // posting author image into imgbb.
+    if(authorImg){
+      imgbb(authorImg)
+      .then(res=>res.json())
+      .then(data=>{
+        const url=data.data.url
+
+        // store author data into mongodb.
+
+        axiosPublic
       .post("/post_author", { name, englishName, url, details })
       .then((res) => {
         console.log(res.data);
         setReload(!reload);
+        document.getElementById("authoradd").reset()
+        document.getElementById("my_modal_3").close()
+        swal(`${name}`,"is added to the author list.","success")
+        
       });
+      })
+    }
+
+
+
+
+
+
+
+
+    
   };
 
   // catagory adding modal handle.
   const addnewcatagory = (e) => {
     e.preventDefault();
-    document.getElementById("my_modal_4").showModal()
+    document.getElementById("my_modal_4").showModal();
   };
   const addingCatagoryModalHandle = (e) => {
     e.preventDefault();
     const newcategory = e.target.category.value;
 
-    axiosPublic
-      .post("/add_catagory", { newcategory })
-      .then(()=>{
-        setReload(!reload)
-        document.getElementById("my_modal_4").close()
-        swal(`${newcategory}`, "Added to the list.", "success")
-        document.getElementById("catagoryAddingForm").reset()
-      });
+    axiosPublic.post("/add_catagory", { newcategory }).then(() => {
+      setReload(!reload);
+      document.getElementById("my_modal_4").close();
+      swal(`${newcategory}`, "Added to the list.", "success");
+      document.getElementById("catagoryAddingForm").reset();
+    });
   };
 
   // end
@@ -240,10 +262,12 @@ const AddABook = () => {
               ✕
             </button>
           </form>
-          <h3 className="font-bold text-lg">
-            If you dont get author just add this author.
-          </h3>
-          <form onSubmit={modalFormHandle}>
+
+          <form
+            id="authoradd"
+            className="flex flex-col gap-4 mt-3"
+            onSubmit={modalFormHandle}
+          >
             <input
               name="authorBanglaName"
               className={inputStyle}
@@ -256,16 +280,19 @@ const AddABook = () => {
               type="text"
               placeholder="Author name in english"
             />
-            <input
-              name="authorImgUrl"
-              className={inputStyle}
-              type="text"
-              placeholder="Author Image url link"
-            />
+            <div className="flex items-center justify-between ">
+              <h1>Author Image :</h1>
+              <input
+              onInput={(e)=>setauthroImg(e.target.files[0])}
+                name="authorImgUrl"
+                type="file"
+                placeholder="Author Image url link"
+              />
+            </div>
             <textarea
               name="authorAbout"
               className={inputStyle}
-              placeholder="say something about this author."
+              placeholder="Write about the author."
             ></textarea>
             <button className="btn btn-primary btn-sm">Submit</button>
           </form>
@@ -282,7 +309,8 @@ const AddABook = () => {
             </button>
           </form>
 
-          <form id="catagoryAddingForm"
+          <form
+            id="catagoryAddingForm"
             onSubmit={addingCatagoryModalHandle}
             className="flex flex-col  gap-5 lg:mt-6"
           >
