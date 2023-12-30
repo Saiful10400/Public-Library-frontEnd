@@ -4,7 +4,7 @@ import SocilaShareComponent from "./shared component/SocilaShareComponent";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { FaArrowLeft } from "react-icons/fa";
 import SharedHader from "./shared component/SharedHader";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import lady from "../../../../public/lady.jpg";
 import gents from "../../../../public/gents.png";
 import useImgUpload from "../../custom Hooks/useImgUpload";
@@ -82,6 +82,7 @@ const Signup = () => {
     console.log(user,"from function.")
   }
   console.log(user);
+
   return (
     <div>
       <div className="flex lg:flex-row flex-col justify-center items-center h-[90vh]">
