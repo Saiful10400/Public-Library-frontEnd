@@ -8,6 +8,8 @@ import { useContext, useState } from "react";
 import lady from "../../../../public/lady.jpg";
 import gents from "../../../../public/gents.png";
 import useImgUpload from "../../custom Hooks/useImgUpload";
+import { FaRegEye } from "react-icons/fa6";
+import { FaRegEyeSlash } from "react-icons/fa6";
 
 let user = {
   firstName: undefined,
@@ -53,11 +55,19 @@ const Signup = () => {
     setReload(!reload);
   };
   // password
+  const[passAlert,setPassAlert]=useState({})
   const password = (e) => {
-    user.password = e.target.value;
-    setReload(!reload);
-  };
-  // 3.profile photo upload.
+    // user.password = e.target.value;
+    // setReload(!reload);
+    const password=e.target.value
+    const pattern = /^(?=.*\d)(?=.*[A-Z])(?=.*[\W_]).*$/
+    const alphabetPattern= /[A-Z]/
+    const specialPattern=/^.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-].*$/
+    const numberPattern=/\d/
+
+    
+  }
+    
   const imgbb = useImgUpload();
   let [uploadLoader,setUploadLoader]=useState(false)
   const profilePhoto = (e) => {
@@ -82,7 +92,8 @@ const Signup = () => {
     console.log(user,"from function.")
   }
   console.log(user);
-
+// password show or not.
+const[passhow,setPasshow]=useState(false)
   return (
     <div>
       <div className="flex lg:flex-row flex-col justify-center items-center h-[90vh]">
@@ -123,21 +134,35 @@ const Signup = () => {
                   </select>
                 </div>
 
+
+
+
                 {/* email and password. */}
-                <div className={progress.length === 2 ? "block" : "hidden"}>
+                <div className={progress.length === 2 ? "block w-full" : "hidden"}>
                   <input
                     onChange={email}
                     type="email"
                     className={inputStyle}
                     placeholder="Your e-mail."
                   />
+                  <div className="relative mt-4">
                   <input
                     onChange={password}
-                    type="password"
-                    className={inputStyle + " " + "mt-4"}
+                    type={passhow?"text":"password"}
+                    className={inputStyle}
                     placeholder="minimum 6 digit password"
                   />
+                  <button className="absolute top-4 text-2xl right-5" onClick={()=>setPasshow(!passhow)}>{passhow?<FaRegEye/>:<FaRegEyeSlash/>}</button>
+                  </div>
+                  <ul className="mt-6">
+                    <li><span>1</span>One alphabet character.</li>
+                    <li><span>2</span>One number.</li>
+                    <li><span>3</span>One special character.</li>
+                  </ul>
                 </div>
+
+
+
 
                 {/* profile photo upload. */}
                 <div className={progress.length === 3 ? "block" : "hidden"}>

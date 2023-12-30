@@ -3,8 +3,10 @@ import {
   signOut,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
-  signInWithRedirect,
+  
   onAuthStateChanged,
+  signInWithPopup,
+  signInWithRedirect,
 } from "firebase/auth";
 import { auth } from "../../firebase";
 export const dataProvider = createContext(null);
@@ -29,7 +31,7 @@ useEffect(()=>{
     return signOut(auth);
   };
   // 2.google login.
-  const googleLogoinHandle = () => {
+  const googleLoginHandle = () => {
     const googleAuthProvider = new GoogleAuthProvider();
     return signInWithRedirect(auth, googleAuthProvider);
   };
@@ -40,7 +42,7 @@ useEffect(()=>{
 
   const contextData = {
     logoutHandle,
-    googleLogoinHandle,
+    googleLoginHandle,
     emailAndPasswordsignup,
     person,loading
   };

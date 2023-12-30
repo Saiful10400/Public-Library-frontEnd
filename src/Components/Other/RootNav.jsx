@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { dataProvider } from "../context api/ContextApi";
 
  
 
@@ -8,6 +10,8 @@ const RootNav = () => {
     <li><NavLink to={"/User_dashboard/Update_profile"}>Dashboard</NavLink></li>
     <li><NavLink to={"/login"}>Login</NavLink></li>
     </>
+    const{person,logoutHandle}=useContext(dataProvider)
+    console.log(person)
   return (
     <div className="navbar bg-base-100">
       <div className="navbar-start">
@@ -35,7 +39,8 @@ const RootNav = () => {
             {li}
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <img className="w-[50px] rounded-full h-[50px]" src={person?.photoURL} alt="" />
+        <span>{person?.displayName}</span>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1 gap-5 text-md font-medium">
@@ -43,7 +48,7 @@ const RootNav = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <a className="btn">Button</a>
+        <a onClick={logoutHandle} className="btn">logout</a>
       </div>
     </div>
   );
