@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import "./userDashboard.css";
-import { FaUserEdit } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import { MdOutlineAdd } from "react-icons/md";
 
 const UserDashboardRoot = () => {
@@ -11,7 +11,7 @@ const UserDashboardRoot = () => {
           className="border  w-full flex  gap-3 items-center py-[10px] font-bold px-[15px] "
           to={"/User_dashboard/Update_profile"}
         >
-          <FaUserEdit className="text-xl" /> Update Profile
+          <FaUser className="text-xl" /> My Profile
         </NavLink>
       </li>
       <li>

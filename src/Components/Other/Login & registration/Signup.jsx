@@ -12,6 +12,10 @@ import { FaRegEye } from "react-icons/fa6";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { IoIosCloseCircle } from "react-icons/io";
+import { dataProvider } from "../../context api/ContextApi";
+import { updateProfile } from "firebase/auth";
+import { auth } from "../../../firebase";
+import { axiosPublic } from "../../custom Hooks/useAxiosPublic";
 
 // user information.
 let user = {
@@ -168,8 +172,25 @@ const Signup = () => {
       });
   };
   // Signup handle submit.
+  const{emailAndPasswordsignup}=useContext(dataProvider)
   const signUpHandle=()=>{
-    console.log(user,"from function.")
+    const email=user.email
+    const password=user.password
+    emailAndPasswordsignup(email,password).then(()=>{
+      updateProfile(auth.currentUser, {
+        displayName: `${user.firstName + " "+user.lastName}`, photoURL: user.photoUrl
+      })
+      .then(()=>{
+        const fulName=null
+        const role="user"
+        const totalPoint=0
+        const totalBooks=0
+        const Books=[]
+        const level=1
+        axiosPublic.post("/post_a_user",{...user,fulName,role,totalPoint,totalBooks,Books,level})
+        .then(res=>console.log(res.data))
+      })
+    })  
   }
   console.log(user);
 // password show or not.
@@ -267,11 +288,11 @@ const[passhow,setPasshow]=useState(false)
                         }
                         alt=""
                       />
-                      <div className={`absolute ${uploadLoader?"flex": "hidden"} top-0 left-0 h-full  justify-center items-center bg-[#ffffffc0] w-full`}><span className="loading loading-spinner text-primary"></span></div>
+                      <div className={`absolute ${uploadLoader?"flex": "hidden"} top-0 left-0 h-full flex-col gap-2 justify-center items-center bg-[#ffffffc0] w-full`}><span className="loading loading-spinner text-primary"></span><span className="font-medium text-gray-800">Uploading</span></div>
                     </div>
                     
                   </label>
-                  <input accept="image/png, image/gif, image/jpeg" disabled={uploadLoader}
+                  <input accept="image/png, image/jpeg" disabled={uploadLoader}
                     onInput={profilePhoto}
                     id="profile"
                     type="file"
@@ -289,7 +310,7 @@ const[passhow,setPasshow]=useState(false)
                       setProgress([...progress]);
                     }
                   }}
-                  className="w-1/5 btn btn-primary"
+                  className={`w-1/5 btn btn-primary ${progress.length===1? "hidden":""}`}
                 >
                   <FaArrowLeft></FaArrowLeft>
                 </button>
@@ -311,7 +332,7 @@ const[passhow,setPasshow]=useState(false)
                       signUpHandle()
                     }
                   }}
-                  className="w-4/5 btn btn-primary"
+                  className={`${progress.length===1?"w-full":"w-4/5"} btn btn-primary`}
                 >
                   {progress.length===3?"Sign up":<span className="flex gap-2">Next <FaArrowRightLong></FaArrowRightLong></span>}
                 </button>
