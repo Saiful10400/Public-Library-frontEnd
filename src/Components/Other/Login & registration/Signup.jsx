@@ -10,7 +10,10 @@ import gents from "../../../../public/gents.png";
 import useImgUpload from "../../custom Hooks/useImgUpload";
 import { FaRegEye } from "react-icons/fa6";
 import { FaRegEyeSlash } from "react-icons/fa6";
+import { IoIosCheckmarkCircle } from "react-icons/io";
+import { IoIosCloseCircle } from "react-icons/io";
 
+// user information.
 let user = {
   firstName: undefined,
   lastName: undefined,
@@ -19,6 +22,9 @@ let user = {
   password: undefined,
   photoUrl:undefined
 };
+
+// password alert.
+let passAlert={alpha:false,special:false,number:false,minimum:false}
 
 const Signup = () => {
   // input type style classes.
@@ -51,11 +57,42 @@ const Signup = () => {
   // 2.email and password.
   // email
   const email = (e) => {
-    user.email = e.target.value;
-    setReload(!reload);
+    // user.email = e.target.value;
+    // setReload(!reload);
+    const email=e.target.value
+    const emailPatern=/com$/i
+    if(email.split("@").length===2){
+      console.log("step 1")
+
+      if(email.split("@")[1].split(".").length===2){
+        
+
+        if(emailPatern.test(email.split("@")[1].split(".")[1])){
+            user.email=email
+            setReload(!reload)
+            
+          }
+          else{
+            user.email=undefined
+            setReload(!reload)
+          }
+
+      }
+      else{
+        user.email=undefined
+        setReload(!reload)
+      }
+      
+    }
+    else{
+      user.email=undefined
+      setReload(!reload)
+    }
+    // console.log(emailPatern.test(email),atPatern.test(email))
+    // console.log(email.split("@")[1]?.split("."))
   };
   // password
-  const[passAlert,setPassAlert]=useState({})
+ 
   const password = (e) => {
     // user.password = e.target.value;
     // setReload(!reload);
@@ -64,9 +101,52 @@ const Signup = () => {
     const alphabetPattern= /[A-Z]/
     const specialPattern=/^.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-].*$/
     const numberPattern=/\d/
-
+    const minimumpattern = /^.{8,}$/
+// console.log(specialPattern.test(password))
+    // password conditional alert.
+    if(alphabetPattern.test(password)){
+      passAlert.alpha=true
+      setReload(!reload)
+    }
+    if(specialPattern.test(password)){
+      passAlert.special=true
+      setReload(!reload)
+    }
+    if(numberPattern.test(password)){
+      passAlert.number=true
+      setReload(!reload)
+    }
+    if(minimumpattern.test(password)){
+      passAlert.minimum=true
+      setReload(!reload)
+    }
+    if(!alphabetPattern.test(password)){
+      passAlert.alpha=false
+      setReload(!reload)
+    }
+    if(!specialPattern.test(password)){
+      passAlert.special=false
+      setReload(!reload)
+      
+    }
+    if(!numberPattern.test(password)){
+      passAlert.number=false
+      setReload(!reload)
+    }
+    if(!minimumpattern.test(password)){
+      passAlert.minimum=false
+      setReload(!reload)
+    }
+    if(passAlert.alpha&&passAlert.special&&passAlert.number&&passAlert.minimum){
+      user.password=password
+    }
+    if(!passAlert.alpha||!passAlert.special||!passAlert.number||!passAlert.minimum){
+      user.password=undefined
+      
+    }
     
   }
+  console.log(passAlert)
     
   const imgbb = useImgUpload();
   let [uploadLoader,setUploadLoader]=useState(false)
@@ -149,15 +229,16 @@ const[passhow,setPasshow]=useState(false)
                   <input
                     onChange={password}
                     type={passhow?"text":"password"}
-                    className={inputStyle}
+                    className={inputStyle+" "+"pr-14"}
                     placeholder="minimum 6 digit password"
                   />
                   <button className="absolute top-4 text-2xl right-5" onClick={()=>setPasshow(!passhow)}>{passhow?<FaRegEye/>:<FaRegEyeSlash/>}</button>
                   </div>
                   <ul className="mt-6">
-                    <li><span>1</span>One alphabet character.</li>
-                    <li><span>2</span>One number.</li>
-                    <li><span>3</span>One special character.</li>
+                    <li className={`flex items-center font-semibold gap-1 ${passAlert.alpha?"text-green-500": "text-red-500"}`}><span>{passAlert.alpha?<IoIosCheckmarkCircle/>:<IoIosCloseCircle/>}</span>minimum One capital letter.</li>
+                    <li className={`flex items-center font-semibold gap-1 ${passAlert.number?"text-green-500": "text-red-500"}`}><span>{passAlert.number?<IoIosCheckmarkCircle/>:<IoIosCloseCircle/>}</span>minimum One number.</li>
+                    <li className={`flex items-center font-semibold gap-1 ${passAlert.special?"text-green-500": "text-red-500"}`}><span>{passAlert.special?<IoIosCheckmarkCircle/>:<IoIosCloseCircle/>}</span>minimum One special character.</li>
+                    <li className={`flex items-center font-semibold gap-1 ${passAlert.minimum?"text-green-500": "text-red-500"}`}><span>{passAlert.minimum?<IoIosCheckmarkCircle/>:<IoIosCloseCircle/>}</span>minimum 8 character.</li>
                   </ul>
                 </div>
 
