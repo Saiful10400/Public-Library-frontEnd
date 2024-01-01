@@ -2,23 +2,13 @@ import { useEffect, useState } from "react";
 // import thumbnail from "../../../../../public/thambnail.png"
 import axios from "axios";
 import useAxiosPublic from "../../../custom Hooks/useAxiosPublic";
-import { toast } from "react-toastify";
 import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
 import useImgUpload from "../../../custom Hooks/useImgUpload";
-export const configTost = {
-  position: "top-center",
-  autoClose: 5000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: true,
-  progress: undefined,
-  theme: "light",
-};
+
 // input styles.
 export const inputStyle =
-  "w-full py-[12px] px-[10px] text-sm font-medium focus:outline-none border text-black";
+  "w-full py-[12px] px-[10px] text-sm font-medium rounded-lg focus:outline-none border text-black";
 const AddABook = () => {
   const move = useNavigate();
   const axiosPublic = useAxiosPublic();
@@ -118,25 +108,38 @@ const AddABook = () => {
     });
   };
 
-  // end
+
+//  book type based form prefare.
+const [bookType,setBooktype]=useState(false)
 
   return (
-    <div>
+    <div className="bg-[#f2f2f2] px-5 pt-4 h-full">
       <h1 className="text-2xl border-b-2 border-black pb-5 font-bold border-dotted">
         Add a Book
       </h1>
-      <form onSubmit={formHandle} className="mt-5 flex flex-col gap-7 ">
+      <div className={`rounded-3xl bg-white py-3 mt-5 flex ${!bookType?"shadow-xl duration-700":""} justify-center items-center gap-6`}>
+        <span className="text-xl font-bold">Select book type:</span>
         <div>
+        <select onChange={(e)=>setBooktype(e.target.value)} className={inputStyle+" "+"font-bold"}>
+          <option disabled selected>Select one</option>
+          <option value="academic">Academic</option>
+          <option value="non-academic">Non-academic</option>
+        </select>
+        </div>
+        
+      </div>
+      <form onSubmit={formHandle} className="mt-5 flex flex-col gap-7 ">
+        <div className={`bg-white rounded-3xl pb-3 px-3 transition-all ${bookType?"opacity-100 duration-700 shadow-xl":"opacity-50"}`}>
           <h1 className="font-bold text-xl text-center border-b border-black mb-2 border-dotted ">
             Book Name
           </h1>
           <div className="flex justify-between gap-12">
-            <input
+            <input disabled={!bookType}
               className={inputStyle}
               type="text"
               placeholder="Book Name in Bangla"
             />
-            <input
+            <input disabled={!bookType}
               className={inputStyle}
               type="text"
               placeholder="Book Name in English"
@@ -144,13 +147,13 @@ const AddABook = () => {
           </div>
         </div>
 
-        <div>
+        <div className={`bg-white rounded-3xl pb-3 px-3 transition-all ${bookType?"opacity-100 duration-700 shadow-xl":"opacity-50"}`}>
           <h1 className="font-bold text-xl  text-center border-b border-black mb-2 border-dotted ">
             Other informations
           </h1>
           <div className="grid grid-cols-2 gap-x-7 gap-y-3">
             <div className="flex justify-center items-center gap-4">
-              <select className={inputStyle}>
+              <select disabled={!bookType} className={inputStyle}>
                 <option disabled selected value="">
                   Select Author
                 </option>
@@ -160,15 +163,15 @@ const AddABook = () => {
                   </option>
                 ))}
               </select>
-              <button onClick={addNewAuthor} className="btn btn-sm btn-primary">
+              <button disabled={!bookType} onClick={addNewAuthor} className="btn btn-sm btn-primary">
                 Add new author
               </button>
             </div>
             {/* this */}
             <div className="flex gap-4 items-center">
-              <select className={inputStyle}>
+              <select disabled={!bookType} className={inputStyle}>
                 <option disabled selected value="">
-                  Select Catagory
+                  Select book Catagory
                 </option>
                 {catagory?.categories.map((item, idx) => (
                   <option value={item.name} key={idx}>
@@ -176,14 +179,14 @@ const AddABook = () => {
                   </option>
                 ))}
               </select>
-              <button
+              <button disabled={!bookType}
                 className="btn btn-primary btn-sm"
                 onClick={addnewcatagory}
               >
                 Add new category
               </button>
             </div>
-            <select className={inputStyle}>
+            <select disabled={!bookType} className={inputStyle}>
               <option disabled selected value="">
                 Select Language
               </option>
@@ -193,7 +196,7 @@ const AddABook = () => {
                 </option>
               ))}
             </select>
-            <select className={inputStyle}>
+            <select disabled={!bookType} className={inputStyle}>
               <option disabled selected value="">
                 Select Country
               </option>
@@ -203,24 +206,24 @@ const AddABook = () => {
                 </option>
               ))}
             </select>
-            <input
+            <input disabled={!bookType}
               type="number"
               className={inputStyle}
               placeholder="total page"
             />
-            <input
+            <input disabled={!bookType}
               type="text"
               className={inputStyle}
               placeholder="Book edition ex: New Edition, 2020"
             />
-            <textarea
+            <textarea disabled={!bookType}
               className={inputStyle}
               placeholder="Book summary"
             ></textarea>
           </div>
         </div>
 
-        <div>
+        <div className={`bg-white rounded-3xl pb-3 px-3 transition-all ${bookType?"opacity-100 duration-700 shadow-xl":"opacity-50"}`}>
           <h1 className="font-bold text-xl  text-center border-b border-black mb-2 border-dotted ">
             Upload files
           </h1>
@@ -228,7 +231,7 @@ const AddABook = () => {
             <label className="" htmlFor="thumbnail">
               {/* <div className="w-[300px] h-[300px]"><img className='w-full h-full object-contain' src={thumbnail} alt="thumbnail" /></div> */}
               <h1 className="font-medium text-sm">Select Book cover photo.</h1>
-              <input
+              <input disabled={!bookType}
                 className={inputStyle}
                 accept="image/png, image/gif, image/jpeg"
                 type="file"
@@ -238,7 +241,7 @@ const AddABook = () => {
 
             <label htmlFor="thumbnail">
               <h1 className="font-medium text-sm">Select Book Pdf.</h1>
-              <input
+              <input disabled={!bookType}
                 accept=".pdf"
                 className={inputStyle}
                 type="file"
@@ -247,7 +250,7 @@ const AddABook = () => {
             </label>
           </div>
         </div>
-        <button className="btn btn-primary">Post</button>
+        <button disabled={!bookType} className="btn btn-primary">Post</button>
       </form>
 
       {/* modal */}
