@@ -48,7 +48,7 @@ const AddABook = () => {
     console.log("form cum");
   };
   // modal form handle.
-  const imgbb=useImgUpload()
+  const imgbb = useImgUpload();
   const [authorImg, setauthroImg] = useState(null);
   const modalFormHandle = (e) => {
     e.preventDefault();
@@ -57,38 +57,26 @@ const AddABook = () => {
     const englishName = form.authorEnglishName.value;
     const details = form.authorAbout.value;
 
-
-
     // posting author image into imgbb.
-    if(authorImg){
+    if (authorImg) {
       imgbb(authorImg)
-      .then(res=>res.json())
-      .then(data=>{
-        const url=data.data.url
+        .then((res) => res.json())
+        .then((data) => {
+          const url = data.data.url;
 
-        // store author data into mongodb.
+          // store author data into mongodb.
 
-        axiosPublic
-      .post("/post_author", { name, englishName, url, details })
-      .then((res) => {
-        console.log(res.data);
-        setReload(!reload);
-        document.getElementById("authoradd").reset()
-        document.getElementById("my_modal_3").close()
-        swal(`${name}`,"is added to the author list.","success")
-        
-      });
-      })
+          axiosPublic
+            .post("/post_author", { name, englishName, url, details })
+            .then((res) => {
+              console.log(res.data);
+              setReload(!reload);
+              document.getElementById("authoradd").reset();
+              document.getElementById("my_modal_3").close();
+              swal(`${name}`, "is added to the author list.", "success");
+            });
+        });
     }
-
-
-
-
-
-
-
-
-    
   };
 
   // catagory adding modal handle.
@@ -108,54 +96,93 @@ const AddABook = () => {
     });
   };
 
+  //  book type based form prefare.
+  const [bookType, setBooktype] = useState(false);
 
-//  book type based form prefare.
-const [bookType,setBooktype]=useState(false)
+  // class names.
+  const [className, setClassName] = useState([]);
+  const [subjectName, setSubjectName] = useState([]);
+  useEffect(() => {
+    axiosPublic
+      .get("/get_classe")
+      .then((res) => setClassName(res.data.classes));
+    axiosPublic
+      .get("/get_subjects")
+      .then((res) => setSubjectName(res.data.subjectNames));
+  }, [axiosPublic]);
+  console.log(subjectName);
 
   return (
     <div className="bg-[#f2f2f2] px-5 pt-4 h-full">
       <h1 className="text-2xl border-b-2 border-black pb-5 font-bold border-dotted">
         Add a Book
       </h1>
-      <div className={`rounded-3xl bg-white py-3 mt-5 flex ${!bookType?"shadow-xl duration-700":""} justify-center items-center gap-6`}>
+      <div
+        className={`rounded-3xl bg-white py-3 mt-5 flex ${
+          !bookType ? "shadow-xl duration-700" : ""
+        } justify-center items-center gap-6`}
+      >
         <span className="text-xl font-bold">Select book type:</span>
         <div>
-        <select onChange={(e)=>setBooktype(e.target.value)} className={inputStyle+" "+"font-bold"}>
-          <option disabled selected>Select one</option>
-          <option value="academic">Academic</option>
-          <option value="non-academic">Non-academic</option>
-        </select>
+          <select
+            onChange={(e) => setBooktype(e.target.value)}
+            className={inputStyle + " " + "font-bold"}
+          >
+            <option disabled selected>
+              Select one
+            </option>
+            <option value="academic">Academic (ex:প্রথম-দ্বাদশ শ্রেণি)</option>
+            <option value="non-academic">
+              Non-academic (ex: উপন্যাস,গল্প,ছড়া, কবিতা etc)
+            </option>
+            <option value="job-preparation">Job preparation</option>
+          </select>
         </div>
-        
       </div>
       <form onSubmit={formHandle} className="mt-5 flex flex-col gap-7 ">
-        <div className={`bg-white rounded-3xl pb-3 px-3 transition-all ${bookType?"opacity-100 duration-700 shadow-xl":"opacity-50"}`}>
+        <div
+          className={`bg-white rounded-3xl pb-3 px-3 transition-all ${
+            bookType ? "opacity-100 duration-700 shadow-xl" : "opacity-50"
+          }`}
+        >
           <h1 className="font-bold text-xl text-center border-b border-black mb-2 border-dotted ">
             Book Name
           </h1>
           <div className="flex justify-between gap-12">
-            <input disabled={!bookType}
+            <input
+              required={true}
+              disabled={!bookType}
               className={inputStyle}
               type="text"
-              placeholder="Book Name in Bangla"
+              placeholder="Book Name in Bangla (required)"
             />
-            <input disabled={!bookType}
+            <input
+              required={true}
+              disabled={!bookType}
               className={inputStyle}
               type="text"
-              placeholder="Book Name in English"
+              placeholder="Book Name in English (required)"
             />
           </div>
         </div>
 
-        <div className={`bg-white rounded-3xl pb-3 px-3 transition-all ${bookType?"opacity-100 duration-700 shadow-xl":"opacity-50"}`}>
+        <div
+          className={`bg-white rounded-3xl pb-3 px-3 transition-all ${
+            bookType ? "opacity-100 duration-700 shadow-xl" : "opacity-50"
+          }`}
+        >
           <h1 className="font-bold text-xl  text-center border-b border-black mb-2 border-dotted ">
             Other informations
           </h1>
           <div className="grid grid-cols-2 gap-x-7 gap-y-3">
             <div className="flex justify-center items-center gap-4">
-              <select disabled={!bookType} className={inputStyle}>
+              <select
+                required={true}
+                disabled={!bookType}
+                className={inputStyle}
+              >
                 <option disabled selected value="">
-                  Select Author
+                  Select Author (required)
                 </option>
                 {author.map((item, idx) => (
                   <option value={item.name} key={idx}>
@@ -163,15 +190,23 @@ const [bookType,setBooktype]=useState(false)
                   </option>
                 ))}
               </select>
-              <button disabled={!bookType} onClick={addNewAuthor} className="btn btn-sm btn-primary">
+              <button
+                disabled={!bookType}
+                onClick={addNewAuthor}
+                className="btn btn-sm btn-primary"
+              >
                 Add new author
               </button>
             </div>
             {/* this */}
             <div className="flex gap-4 items-center">
-              <select disabled={!bookType} className={inputStyle}>
+              <select
+                required={true}
+                disabled={!bookType}
+                className={inputStyle}
+              >
                 <option disabled selected value="">
-                  Select book Catagory
+                  Select book Catagory (required)
                 </option>
                 {catagory?.categories.map((item, idx) => (
                   <option value={item.name} key={idx}>
@@ -179,16 +214,17 @@ const [bookType,setBooktype]=useState(false)
                   </option>
                 ))}
               </select>
-              <button disabled={!bookType}
+              <button
+                disabled={!bookType}
                 className="btn btn-primary btn-sm"
                 onClick={addnewcatagory}
               >
                 Add new category
               </button>
             </div>
-            <select disabled={!bookType} className={inputStyle}>
+            <select required={true} disabled={!bookType} className={inputStyle}>
               <option disabled selected value="">
-                Select Language
+                Select Language (required)
               </option>
               {language.map((item, idx) => (
                 <option value={item.name} key={idx}>
@@ -196,9 +232,44 @@ const [bookType,setBooktype]=useState(false)
                 </option>
               ))}
             </select>
-            <select disabled={!bookType} className={inputStyle}>
+            {/* class select. */}
+
+            <select required={true}
+                disabled={!bookType}
+                className={inputStyle}>
               <option disabled selected value="">
-                Select Country
+                Select Class (required)
+              </option>
+              {className.map((item, idx) => (
+                <option value={item.classNumber} key={idx}>
+                  {++idx}. {item.className}
+                </option>
+              ))}
+            </select>
+            {/* subject selector */}
+            <div className="flex justify-center items-center gap-4">
+              <select
+                required={true}
+                disabled={!bookType}
+                className={inputStyle}
+              >
+                <option disabled selected value="">
+                  Select subject (required)
+                </option>
+                {subjectName.map((item, idx) => (
+                  <option value={item.bangla} key={idx}>
+                    {++idx}. {item.bangla} ({item.english})
+                  </option>
+                ))}
+              </select>
+              <button disabled={!bookType} className="btn btn-primary btn-sm">
+                Add new subject
+              </button>
+            </div>
+
+            <select required={true} disabled={!bookType} className={inputStyle}>
+              <option disabled selected value="">
+                Select Country (required)
               </option>
               {country.map((item, idx) => (
                 <option value={item.name.common} key={idx}>
@@ -206,42 +277,57 @@ const [bookType,setBooktype]=useState(false)
                 </option>
               ))}
             </select>
-            <input disabled={!bookType}
+            <input
+              disabled={!bookType}
               type="number"
               className={inputStyle}
-              placeholder="total page"
+              placeholder="total page (optional)"
             />
-            <input disabled={!bookType}
+            <input
+              disabled={!bookType}
               type="text"
               className={inputStyle}
-              placeholder="Book edition ex: New Edition, 2020"
+              placeholder="Book edition (optional) ex: New Edition, 2020"
             />
-            <textarea disabled={!bookType}
+            <textarea
+              disabled={!bookType}
               className={inputStyle}
-              placeholder="Book summary"
+              placeholder="Book summary (optional)"
             ></textarea>
           </div>
         </div>
 
-        <div className={`bg-white rounded-3xl pb-3 px-3 transition-all ${bookType?"opacity-100 duration-700 shadow-xl":"opacity-50"}`}>
+        <div
+          className={`bg-white rounded-3xl pb-3 px-3 transition-all ${
+            bookType ? "opacity-100 duration-700 shadow-xl" : "opacity-50"
+          }`}
+        >
           <h1 className="font-bold text-xl  text-center border-b border-black mb-2 border-dotted ">
             Upload files
           </h1>
           <div className="grid grid-cols-2 gap-7">
             <label className="" htmlFor="thumbnail">
               {/* <div className="w-[300px] h-[300px]"><img className='w-full h-full object-contain' src={thumbnail} alt="thumbnail" /></div> */}
-              <h1 className="font-medium text-sm">Select Book cover photo.</h1>
-              <input disabled={!bookType}
+              <h1 className="font-medium text-sm">
+                Select Book cover photo. (required)
+              </h1>
+              <input
+                required={true}
+                disabled={!bookType}
                 className={inputStyle}
-                accept="image/png, image/gif, image/jpeg"
+                accept="image/png, image/jpeg"
                 type="file"
                 id="thumbnail"
               />
             </label>
 
             <label htmlFor="thumbnail">
-              <h1 className="font-medium text-sm">Select Book Pdf.</h1>
-              <input disabled={!bookType}
+              <h1 className="font-medium text-sm">
+                Select Book Pdf. (required)
+              </h1>
+              <input
+                required={true}
+                disabled={!bookType}
                 accept=".pdf"
                 className={inputStyle}
                 type="file"
@@ -250,7 +336,9 @@ const [bookType,setBooktype]=useState(false)
             </label>
           </div>
         </div>
-        <button disabled={!bookType} className="btn btn-primary">Post</button>
+        <button disabled={!bookType} className="btn btn-primary">
+          Post
+        </button>
       </form>
 
       {/* modal */}
@@ -286,7 +374,7 @@ const [bookType,setBooktype]=useState(false)
             <div className="flex items-center justify-between ">
               <h1>Author Image :</h1>
               <input
-              onInput={(e)=>setauthroImg(e.target.files[0])}
+                onInput={(e) => setauthroImg(e.target.files[0])}
                 name="authorImgUrl"
                 type="file"
                 placeholder="Author Image url link"
