@@ -183,11 +183,11 @@ const Signup = () => {
       .then(()=>{
         const fulName=null
         const role="user"
-        const totalPoint=0
         const totalBooks=0
+        const pandingBooks=0
         const Books=[]
-        const level=1
-        axiosPublic.post("/post_a_user",{...user,fulName,role,totalPoint,totalBooks,Books,level})
+        
+        axiosPublic.post("/post_a_user",{...user,fulName,role,pandingBooks,totalBooks,Books})
         .then(res=>console.log(res.data))
       })
     })  
