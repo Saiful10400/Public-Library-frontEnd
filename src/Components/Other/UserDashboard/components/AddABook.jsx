@@ -45,7 +45,21 @@ const AddABook = () => {
   // form submittion handle.
   const formHandle = (e) => {
     e.preventDefault();
-    console.log("form cum");
+
+    const form=e.target
+    const banglaName=form.banglaName.value
+    const englishName=form.englishName.value
+    let author=form.bookAuthor.value
+    author=author===""?null:author
+    const catagory=form.bookCatagory.value
+    const language=form.bookLanguage.value
+    const forClass=form.bookForClass.value
+    const subject=form.bookSubject.value
+    const country=form.bookCountry.value
+    const page=form.pageNumber.value
+    const edition=form.bookEdition.value
+    const summery=form.bookSummery.value
+    console.log({banglaName,englishName,author,catagory,language,forClass,subject,country,page,edition,summery})
   };
   // modal form handle.
   const imgbb = useImgUpload();
@@ -97,7 +111,7 @@ const AddABook = () => {
   };
 
   //  book type based form prefare.
-  const [bookType, setBooktype] = useState(false);
+  const [bookType, setBooktype] = useState(null);
 
   // class names.
   const [className, setClassName] = useState([]);
@@ -110,8 +124,8 @@ const AddABook = () => {
       .get("/get_subjects")
       .then((res) => setSubjectName(res.data.subjectNames));
   }, [axiosPublic]);
-  console.log(subjectName);
-
+ 
+console.log(bookType)
   return (
     <div className="bg-[#f2f2f2] px-5 pt-4 h-full">
       <h1 className="text-2xl border-b-2 border-black pb-5 font-bold border-dotted">
@@ -150,6 +164,7 @@ const AddABook = () => {
           </h1>
           <div className="flex justify-between gap-12">
             <input
+            name="banglaName"
               required={true}
               disabled={!bookType}
               className={inputStyle}
@@ -157,6 +172,7 @@ const AddABook = () => {
               placeholder="Book Name in Bangla (required)"
             />
             <input
+            name="englishName"
               required={true}
               disabled={!bookType}
               className={inputStyle}
@@ -175,11 +191,12 @@ const AddABook = () => {
             Other informations
           </h1>
           <div className="grid grid-cols-2 gap-x-7 gap-y-3">
-            <div className="flex justify-center items-center gap-4">
+            <div className={`flex justify-center items-center gap-4 ${bookType==="academic"?"hidden":""}`}>
               <select
-                required={true}
-                disabled={!bookType}
+                required={bookType==="academic"?false:true}
                 className={inputStyle}
+                disabled={!bookType}
+                name="bookAuthor"
               >
                 <option disabled selected value="">
                   Select Author (required)
@@ -199,9 +216,9 @@ const AddABook = () => {
               </button>
             </div>
             {/* this */}
-            <div className="flex gap-4 items-center">
-              <select
-                required={true}
+            <div className={`flex justify-center items-center gap-4 ${bookType==="academic"?"hidden":""}`}>
+              <select name="bookCatagory"
+                required={bookType==="academic"?false:true}
                 disabled={!bookType}
                 className={inputStyle}
               >
@@ -209,7 +226,7 @@ const AddABook = () => {
                   Select book Catagory (required)
                 </option>
                 {catagory?.categories.map((item, idx) => (
-                  <option value={item.name} key={idx}>
+                  <option value={item} key={idx}>
                     {(idx += 1)}. {item}
                   </option>
                 ))}
@@ -222,7 +239,8 @@ const AddABook = () => {
                 Add new category
               </button>
             </div>
-            <select required={true} disabled={!bookType} className={inputStyle}>
+            <div className={`${bookType==="academic"?"hidden":""}`}>
+            <select name="bookLanguage" required={bookType==="academic"?false:true} disabled={!bookType} className={inputStyle}>
               <option disabled selected value="">
                 Select Language (required)
               </option>
@@ -232,9 +250,12 @@ const AddABook = () => {
                 </option>
               ))}
             </select>
+            </div>
             {/* class select. */}
 
-            <select required={true}
+            <select
+            name="bookForClass"
+             required={true}
                 disabled={!bookType}
                 className={inputStyle}>
               <option disabled selected value="">
@@ -249,6 +270,7 @@ const AddABook = () => {
             {/* subject selector */}
             <div className="flex justify-center items-center gap-4">
               <select
+              name="bookSubject"
                 required={true}
                 disabled={!bookType}
                 className={inputStyle}
@@ -267,9 +289,9 @@ const AddABook = () => {
               </button>
             </div>
 
-            <select required={true} disabled={!bookType} className={inputStyle}>
+            <select name="bookCountry" required={false} disabled={!bookType} className={inputStyle}>
               <option disabled selected value="">
-                Select Country (required)
+                Select book target audience country (optional)
               </option>
               {country.map((item, idx) => (
                 <option value={item.name.common} key={idx}>
@@ -278,18 +300,21 @@ const AddABook = () => {
               ))}
             </select>
             <input
+            name="pageNumber"
               disabled={!bookType}
               type="number"
               className={inputStyle}
               placeholder="total page (optional)"
             />
             <input
+            name="bookEdition"
               disabled={!bookType}
               type="text"
               className={inputStyle}
               placeholder="Book edition (optional) ex: New Edition, 2020"
             />
             <textarea
+            name="bookSummery"
               disabled={!bookType}
               className={inputStyle}
               placeholder="Book summary (optional)"
@@ -312,6 +337,7 @@ const AddABook = () => {
                 Select Book cover photo. (required)
               </h1>
               <input
+              
                 required={true}
                 disabled={!bookType}
                 className={inputStyle}
