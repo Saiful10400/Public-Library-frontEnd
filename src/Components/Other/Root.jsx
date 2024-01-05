@@ -10,7 +10,7 @@ const Root = () => {
     return (
         <div>
             <div><RootNav></RootNav></div>
-            <div className={` mx-auto px-4 lg:px-0 min-h-[90vh] ${url.pathname.includes("User_dashboard")?"w-full":"lg:w-[1400px]"}`}>
+            <div className={` mx-auto  lg:px-0 min-h-[90vh] ${url.pathname.includes("User_dashboard")?"w-full":"lg:w-[1400px] px-4"}`}>
                 <Outlet></Outlet>
             </div>
             <div>

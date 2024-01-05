@@ -11,7 +11,7 @@ const RootNav = () => {
     <li><NavLink to={"/login"}>Login</NavLink></li>
     </>
     const{person,logoutHandle}=useContext(dataProvider)
-    console.log(person)
+    
   return (
     <div className="navbar bg-base-100">
       <div className="navbar-start">

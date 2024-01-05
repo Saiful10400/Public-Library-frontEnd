@@ -24,7 +24,7 @@ const UpdateProfile = () => {
       });
     }
   }, [person]);
-  console.log(user);
+ 
 
   // user email verification handle.
   const userVarify = () => {
@@ -64,7 +64,7 @@ const UpdateProfile = () => {
                 }`}
               />
             </div>
-            <div className=" w-[50%]">
+            <div className="w-[50%]">
               <div>
                 <h1 className="text-xl font-bold mb-1">Your name</h1>
                 <h1 className={inputStyle}>

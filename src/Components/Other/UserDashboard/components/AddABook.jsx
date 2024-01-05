@@ -5,6 +5,9 @@ import useAxiosPublic from "../../../custom Hooks/useAxiosPublic";
 import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
 import useImgUpload from "../../../custom Hooks/useImgUpload";
+import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import pdfIcon from "../../../../../public/pdf.png"
+import imgIcon from "../../../../../public/img.png"
 
 // input styles.
 export const inputStyle =
@@ -43,23 +46,45 @@ const AddABook = () => {
   };
 
   // form submittion handle.
+  // book and coverphoto url.
+  const[coverPhotoUrl,setCoverPhotoUrl]=useState(null)
+
+const[pdfUrl,setPdfUrl]=useState(null)
   const formHandle = (e) => {
     e.preventDefault();
+    const validation=(value)=>{
+      if(value===""){
+        return null
+      }
+      return value
+    }
 
     const form=e.target
     const banglaName=form.banglaName.value
     const englishName=form.englishName.value
     let author=form.bookAuthor.value
-    author=author===""?null:author
-    const catagory=form.bookCatagory.value
-    const language=form.bookLanguage.value
-    const forClass=form.bookForClass.value
-    const subject=form.bookSubject.value
-    const country=form.bookCountry.value
-    const page=form.pageNumber.value
-    const edition=form.bookEdition.value
-    const summery=form.bookSummery.value
-    console.log({banglaName,englishName,author,catagory,language,forClass,subject,country,page,edition,summery})
+    author=validation(author)
+    let catagory=form.bookCatagory.value
+    catagory=validation(catagory)
+    let language=form.bookLanguage.value
+    language=validation(language)
+    let forClass=form.bookForClass.value
+    forClass=validation(forClass)
+    let subject=form.bookSubject.value
+    subject=validation(subject)
+    let country=form.bookCountry.value
+    country=validation(country)
+    let page=form.pageNumber.value
+    page=validation(page)
+    let edition=form.bookEdition.value
+    edition=validation(edition)
+    let summery=form.bookSummery.value
+    summery=validation(summery)
+    const coverPhoto=coverPhotoUrl
+    const pdf=pdfUrl
+    console.log({banglaName,englishName,author,catagory,language,forClass,subject,country,page,edition,summery,coverPhoto,pdf})
+    form.reset()
+    
   };
   // modal form handle.
   const imgbb = useImgUpload();
@@ -125,7 +150,59 @@ const AddABook = () => {
       .then((res) => setSubjectName(res.data.subjectNames));
   }, [axiosPublic]);
  
-console.log(bookType)
+
+// book coverphoto and book file handle.
+const[bookName,setBookName]=useState("Chose book pdf.")
+const[bookCoverName,setBookCoverName]=useState("Chose book cover photo.")
+const[coverUploadLoading,setCoverUploadLoading]=useState(false)
+// book coaver photo url handle.
+const bookCoverUrl=(e)=>{
+  const coverPhotoFile=e.target.files[0]
+  setBookCoverName(coverPhotoFile?.name)
+  setCoverUploadLoading(true)
+  imgbb(coverPhotoFile)
+  .then(res=>res.json())
+  .then(res=>{
+    setCoverPhotoUrl(res?.data?.url)
+    setCoverUploadLoading("done")
+  })
+}
+
+// book url handle.
+const [progress,setProgress]=useState(0)
+const [fileComplition,setFileComplition]=useState("")
+
+const bookUrl=(e)=>{
+  const bookFile=e.target.files[0]
+  setBookName(bookFile?.name)
+  // date and rendom number for unique name.
+  const date=new Date().toLocaleDateString("en-US")
+  // storage ref.
+  const storage=getStorage()
+  // pdf folder ref.
+  const pdfFolder=ref(storage,"PDFS")
+  // file reference.
+  const fileref=ref(pdfFolder,`${bookFile?.name.split(".pdf")[0]+"-"+date+"/"+"R"+"_"+(parseInt(Math.random()*100))}.pdf`)
+  // upload the file.
+  if(bookFile?.type.includes("pdf")){
+ const uploadTask= uploadBytesResumable(fileref,bookFile)
+ uploadTask.on('state_changed', (snapshot) => {
+  // Handle the snapshot to get upload progress
+  const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  // console.log('Upload is ' + progress + '% done');
+  setProgress(progress)
+}, (error) => {
+  // Handle errors during upload
+  console.error('Error uploading file: ', error);
+}, () => {
+  // Handle successful upload completion
+  setFileComplition('Uploaded.');
+  getDownloadURL(fileref).then(res=>setPdfUrl(res))
+});
+  }
+
+
+}
   return (
     <div className="bg-[#f2f2f2] px-5 pt-4 h-full">
       <h1 className="text-2xl border-b-2 border-black pb-5 font-bold border-dotted">
@@ -134,15 +211,16 @@ console.log(bookType)
       <div
         className={`rounded-3xl bg-white py-3 mt-5 flex ${
           !bookType ? "shadow-xl duration-700" : ""
-        } justify-center items-center gap-6`}
+        } justify-center flex-col lg:flex-row items-center gap-6`}
       >
         <span className="text-xl font-bold">Select book type:</span>
         <div>
           <select
             onChange={(e) => setBooktype(e.target.value)}
             className={inputStyle + " " + "font-bold"}
+            defaultValue=""
           >
-            <option disabled selected>
+            <option disabled value="">
               Select one
             </option>
             <option value="academic">Academic (ex:প্রথম-দ্বাদশ শ্রেণি)</option>
@@ -153,7 +231,7 @@ console.log(bookType)
           </select>
         </div>
       </div>
-      <form onSubmit={formHandle} className="mt-5 flex flex-col gap-7 ">
+      <form onSubmit={formHandle} className="mt-5 flex flex-col gap-7 mb-5 ">
         <div
           className={`bg-white rounded-3xl pb-3 px-3 transition-all ${
             bookType ? "opacity-100 duration-700 shadow-xl" : "opacity-50"
@@ -162,7 +240,7 @@ console.log(bookType)
           <h1 className="font-bold text-xl text-center border-b border-black mb-2 border-dotted ">
             Book Name
           </h1>
-          <div className="flex justify-between gap-12">
+          <div className="flex flex-col lg:flex-row justify-between gap-12">
             <input
             name="banglaName"
               required={true}
@@ -190,15 +268,17 @@ console.log(bookType)
           <h1 className="font-bold text-xl  text-center border-b border-black mb-2 border-dotted ">
             Other informations
           </h1>
-          <div className="grid grid-cols-2 gap-x-7 gap-y-3">
-            <div className={`flex justify-center items-center gap-4 ${bookType==="academic"?"hidden":""}`}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-7 gap-y-3">
+            <div className={`justify-center items-center gap-4 ${bookType==="academic"||bookType==="job-preparation"?"hidden":"flex"}`}>
               <select
-                required={bookType==="academic"?false:true}
+              defaultValue=""
+                required={bookType==="academic"||bookType==="job-preparation"?false:true}
+                aria-required={bookType==="academic"||bookType==="job-preparation"?false:true}
                 className={inputStyle}
                 disabled={!bookType}
                 name="bookAuthor"
               >
-                <option disabled selected value="">
+                <option disabled  value="">
                   Select Author (required)
                 </option>
                 {author.map((item, idx) => (
@@ -215,14 +295,17 @@ console.log(bookType)
                 Add new author
               </button>
             </div>
-            {/* this */}
-            <div className={`flex justify-center items-center gap-4 ${bookType==="academic"?"hidden":""}`}>
-              <select name="bookCatagory"
-                required={bookType==="academic"?false:true}
+            
+            <div className={`flex justify-center items-center gap-4 ${bookType==="academic"||bookType==="job-preparation"?"hidden":""}`}>
+              <select defaultValue="" name="bookCatagory"
+                required={bookType==="academic"||bookType==="job-preparation"?false:true}
+                aria-required={bookType==="academic"||bookType==="job-preparation"?false:true}
+                
                 disabled={!bookType}
                 className={inputStyle}
+                
               >
-                <option disabled selected value="">
+                <option disabled value="">
                   Select book Catagory (required)
                 </option>
                 {catagory?.categories.map((item, idx) => (
@@ -240,8 +323,8 @@ console.log(bookType)
               </button>
             </div>
             <div className={`${bookType==="academic"?"hidden":""}`}>
-            <select name="bookLanguage" required={bookType==="academic"?false:true} disabled={!bookType} className={inputStyle}>
-              <option disabled selected value="">
+            <select defaultValue="" name="bookLanguage" required={bookType==="academic"?false:true} aria-required={bookType==="academic"?false:true} disabled={!bookType} className={inputStyle}>
+              <option disabled value="">
                 Select Language (required)
               </option>
               {language.map((item, idx) => (
@@ -255,10 +338,12 @@ console.log(bookType)
 
             <select
             name="bookForClass"
-             required={true}
+            required={bookType==="non-academic"||bookType==="job-preparation"?false:true}
+            aria-required={bookType==="non-academic"||bookType==="job-preparation"?false:true}
+            defaultValue=""
                 disabled={!bookType}
-                className={inputStyle}>
-              <option disabled selected value="">
+                className={bookType==="non-academic"||bookType==="job-preparation"?"hidden":inputStyle}>
+              <option disabled  value="">
                 Select Class (required)
               </option>
               {className.map((item, idx) => (
@@ -268,14 +353,16 @@ console.log(bookType)
               ))}
             </select>
             {/* subject selector */}
-            <div className="flex justify-center items-center gap-4">
+            <div className={`${bookType==="non-academic"?"hidden":"flex"}  justify-center items-center gap-4`}>
               <select
               name="bookSubject"
-                required={true}
+                required={bookType==="non-academic"?false:true}
+                aria-required={bookType==="non-academic"?false:true}
                 disabled={!bookType}
                 className={inputStyle}
+                defaultValue=""
               >
-                <option disabled selected value="">
+                <option disabled value="">
                   Select subject (required)
                 </option>
                 {subjectName.map((item, idx) => (
@@ -289,8 +376,8 @@ console.log(bookType)
               </button>
             </div>
 
-            <select name="bookCountry" required={false} disabled={!bookType} className={inputStyle}>
-              <option disabled selected value="">
+            <select name="bookCountry" required={false} defaultValue="" disabled={!bookType} className={`${bookType==="academic"||bookType==="job-preparation"?"hidden":inputStyle}`}>
+              <option disabled value="">
                 Select book target audience country (optional)
               </option>
               {country.map((item, idx) => (
@@ -303,7 +390,7 @@ console.log(bookType)
             name="pageNumber"
               disabled={!bookType}
               type="number"
-              className={inputStyle}
+              className={`${bookType==="academic"?"hidden":inputStyle}`}
               placeholder="total page (optional)"
             />
             <input
@@ -316,7 +403,7 @@ console.log(bookType)
             <textarea
             name="bookSummery"
               disabled={!bookType}
-              className={inputStyle}
+              className={`${bookType==="academic"?"hidden":inputStyle}`}
               placeholder="Book summary (optional)"
             ></textarea>
           </div>
@@ -330,39 +417,50 @@ console.log(bookType)
           <h1 className="font-bold text-xl  text-center border-b border-black mb-2 border-dotted ">
             Upload files
           </h1>
-          <div className="grid grid-cols-2 gap-7">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 mt-5">
+            <div>
             <label className="" htmlFor="thumbnail">
-              {/* <div className="w-[300px] h-[300px]"><img className='w-full h-full object-contain' src={thumbnail} alt="thumbnail" /></div> */}
-              <h1 className="font-medium text-sm">
-                Select Book cover photo. (required)
-              </h1>
+            <div className="flex items-end gap-3">
+                <img className="lg:w-[70px] w-[30px]" src={imgIcon} alt="pdf icon." />
+                <h1 className="font-bold text-[12px] lg:text-base">{bookCoverName}</h1>
+              </div>
               <input
-              
+              onInput={bookCoverUrl}
                 required={true}
                 disabled={!bookType}
-                className={inputStyle}
+                className={inputStyle+" "+"hidden"}
                 accept="image/png, image/jpeg"
                 type="file"
                 id="thumbnail"
               />
             </label>
+            {
+              coverUploadLoading==="done"?<span className={`flex items-center gap-3`}><progress className="progress progress-primary w-56" value="100" max="100"></progress><span className="font-bold text-[12px] lg:text-[13px]">Uploaded.</span></span>:coverUploadLoading?<progress className="progress progress-primary w-56"></progress>:""
+            }
+            
+            </div>
 
-            <label htmlFor="thumbnail">
-              <h1 className="font-medium text-sm">
-                Select Book Pdf. (required)
-              </h1>
+            <div>
+            <label htmlFor="bookPdf">
+              <div className="flex items-end gap-3">
+                <img className="lg:w-[70px] w-[30px]" src={pdfIcon} alt="pdf icon." />
+                <h1 className="font-bold text-[12px] lg:text-base">{bookName}</h1>
+              </div>
               <input
+              onInput={bookUrl}
                 required={true}
                 disabled={!bookType}
                 accept=".pdf"
-                className={inputStyle}
+                className={inputStyle+" "+"hidden"}
                 type="file"
-                id="thumbnail"
+                id="bookPdf"
               />
             </label>
+            <div className={progress===0?"opacity-0":"flex gap-3 opacity-100 duration-300 items-center"}><progress className="progress progress-primary w-56" value={progress} max="100"></progress><span className="font-bold text-[12px] lg:text-[13px]">{progress===100?fileComplition:(progress.toFixed(1)+"%")}</span></div>
+            </div>
           </div>
         </div>
-        <button disabled={!bookType} className="btn btn-primary">
+        <button disabled={!(bookType&&coverPhotoUrl&&pdfUrl)} className="btn btn-primary btn-sm lg:btn-md">
           Post
         </button>
       </form>
@@ -397,7 +495,7 @@ console.log(bookType)
               type="text"
               placeholder="Author name in english"
             />
-            <div className="flex items-center justify-between ">
+            <div className="flex items-center flex-col lg:flex-row justify-between ">
               <h1>Author Image :</h1>
               <input
                 onInput={(e) => setauthroImg(e.target.files[0])}
@@ -438,7 +536,8 @@ console.log(bookType)
               placeholder="Add new catagory"
             />
 
-            <button className="btn btn-primary btn-sm">Submit</button>
+            <button type="submit" className="btn btn-primary btn-sm">Submit</button>
+            
           </form>
         </div>
       </dialog>
