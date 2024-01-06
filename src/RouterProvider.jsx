@@ -8,6 +8,8 @@ import AddABook from "./Components/Other/UserDashboard/components/AddABook";
 import PdfView from "./PdfView";
 import Login from "./Components/Other/Login & registration/Login";
 import Signup from "./Components/Other/Login & registration/Signup";
+import FakeEmailVarify from "./Components/RouteProtection/FakeEmailVarify";
+import PrivateRoute from "./Components/RouteProtection/PrivateRoute";
 
 
 
@@ -31,7 +33,7 @@ export const router=createBrowserRouter([
             },
             {
                 path:"/User_dashboard",
-                element:<UserDashboardRoot></UserDashboardRoot>,
+                element:<PrivateRoute><UserDashboardRoot></UserDashboardRoot></PrivateRoute>,
                 children:[
                    
                     {
@@ -40,7 +42,7 @@ export const router=createBrowserRouter([
                     },
                     {
                         path:"Add_a_book",
-                        element:<AddABook></AddABook>
+                        element:<FakeEmailVarify><AddABook></AddABook></FakeEmailVarify>
                     }
                 ]
             }

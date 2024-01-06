@@ -1,18 +1,36 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import img from "../../../../public/Login.svg";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SocilaShareComponent from "./shared component/SocilaShareComponent";
 import { IoMdEye } from "react-icons/io";
 import { IoIosEyeOff } from "react-icons/io";
 import SharedHader from "./shared component/SharedHader";
+import { dataProvider } from "../../context api/ContextApi";
 const Login = () => {
   const [passshow, setPassshow] = useState(false);
+  const move=useNavigate()
+  // login form handle
+  const[loading,setLoading]=useState(false)
+  const{login}=useContext(dataProvider)
+  const loginHadle=(e)=>{
+    e.preventDefault()
+    const form=e.target
+    const email=form.email.value
+    const password=form.password.value
+    setLoading(true)
+    login(email,password)
+    .then(()=>{
+      setLoading(false)
+      move("/User_dashboard/Update_profile")
+      
+    })
+  }
   return (
     <div className="flex lg:flex-row flex-col justify-center items-center h-[90vh]">
       <div className="bg-gray-100 rounded-3xl lg:h-[70vh] w-full flex gap-3">
         <div className="lg:w-[40%]  bg-gray-50 lg:px-10 px-6 py-9">
             <SharedHader data={"Login"}></SharedHader>
-          <form className="flex flex-col gap-4 mt-12">
+          <form onSubmit={loginHadle} className="flex flex-col gap-4 mt-12">
             <div>
               <label className="text-xl font-bold" htmlFor="email">
                 Email address
@@ -58,8 +76,8 @@ const Login = () => {
                 </button>
               </div>
             </div>
-            <button className="btn btn-primary bg-[#893dff] text-gray-100 border-none my-6">
-              Login
+            <button className="btn btn-primary bg-[#893dff] text-gray-100 border-none my-6 flex items-center">
+              <span>Login</span><span className={loading?"loading loading-dots loading-md":"hidden"}></span>
             </button>
           </form>
           <SocilaShareComponent data={"login"}></SocilaShareComponent>

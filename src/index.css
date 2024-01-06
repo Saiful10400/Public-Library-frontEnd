@@ -8,3 +8,11 @@
 :root {
   font-family: 'Work Sans', sans-serif;
 }
+
+.noScrollBar::-webkit-scrollbar{
+  display: none;
+}
+.noScrollBar::-webkit-scrollbar{
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

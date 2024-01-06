@@ -16,6 +16,7 @@ import { dataProvider } from "../../context api/ContextApi";
 import { updateProfile } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { axiosPublic } from "../../custom Hooks/useAxiosPublic";
+import { useNavigate } from "react-router-dom";
 
 // user information.
 let user = {
@@ -38,6 +39,7 @@ const Signup = () => {
   console.log(progress);
   let [reload, setReload] = useState(true);
   let [profile, setProfile] = useState({ file: undefined, string: undefined });
+  const move=useNavigate()
 
   // user all data managing form here.
 
@@ -56,7 +58,7 @@ const Signup = () => {
   const gender = (e) => {
     user.gender = e.target.value;
     setReload(!reload);
-    console.log(user);
+    
   };
   // 2.email and password.
   // email
@@ -150,7 +152,7 @@ const Signup = () => {
     }
     
   }
-  console.log(passAlert)
+ 
     
   const imgbb = useImgUpload();
   let [uploadLoader,setUploadLoader]=useState(false)
@@ -173,9 +175,11 @@ const Signup = () => {
   };
   // Signup handle submit.
   const{emailAndPasswordsignup}=useContext(dataProvider)
+  const[signupReload,setSignupReload]=useState(false)
   const signUpHandle=()=>{
-    const email=user.email
-    const password=user.password
+    const email=user?.email
+    const password=user?.password
+    setSignupReload(true)
     emailAndPasswordsignup(email,password).then(()=>{
       updateProfile(auth.currentUser, {
         displayName: `${user.firstName + " "+user.lastName}`, photoURL: user.photoUrl
@@ -188,11 +192,15 @@ const Signup = () => {
         const Books=[]
         
         axiosPublic.post("/post_a_user",{...user,fulName,role,pandingBooks,totalBooks,Books})
-        .then(res=>console.log(res.data))
+        .then(res=>{
+          console.log(res.data)
+          setSignupReload(false)
+          move("/User_dashboard/Update_profile")
+        })
       })
     })  
   }
-  console.log(user);
+  
 // password show or not.
 const[passhow,setPasshow]=useState(false)
   return (
@@ -328,13 +336,13 @@ const[passhow,setPasshow]=useState(false)
                     if (progress.length < 3) {
                       setProgress([...progress, "step-primary"]);
                     }
-                    else if(progress.length===3){
+                    else if(progress.length===3&&!signupReload){
                       signUpHandle()
                     }
                   }}
                   className={`${progress.length===1?"w-full":"w-4/5"} btn btn-primary`}
                 >
-                  {progress.length===3?"Sign up":<span className="flex gap-2">Next <FaArrowRightLong></FaArrowRightLong></span>}
+                  {progress.length===3?<div className="flex items-center gap-2"><span>Sign up</span><span className={signupReload?"loading loading-dots loading-md":"hidden"}></span></div>:<span className="flex gap-2">Next <FaArrowRightLong></FaArrowRightLong></span>}
                 </button>
               </div>
             </div>

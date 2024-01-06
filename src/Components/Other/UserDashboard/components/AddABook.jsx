@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 // import thumbnail from "../../../../../public/thambnail.png"
 import axios from "axios";
 import useAxiosPublic from "../../../custom Hooks/useAxiosPublic";
@@ -8,18 +8,22 @@ import useImgUpload from "../../../custom Hooks/useImgUpload";
 import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 import pdfIcon from "../../../../../public/pdf.png"
 import imgIcon from "../../../../../public/img.png"
+import { dataProvider } from "../../../context api/ContextApi";
 
 // input styles.
 export const inputStyle =
   "w-full py-[12px] px-[10px] text-sm font-medium rounded-lg focus:outline-none border text-black";
 const AddABook = () => {
   const move = useNavigate();
+  const {person}=useContext(dataProvider)
   const axiosPublic = useAxiosPublic();
   const [country, setCountry] = useState([]);
   const [author, setAuthor] = useState([]);
   const [language, setLanguage] = useState([]);
   const [catagory, setCatagory] = useState(null);
   const [reload, setReload] = useState(true);
+  const[user,setUser]=useState(null)
+
   useEffect(() => {
     axios.get("https://restcountries.com/v3.1/all").then((res) => {
       const sortedItem = res.data.sort((a, b) => {
@@ -31,13 +35,18 @@ const AddABook = () => {
       });
       setCountry(sortedItem);
     });
+    // get user.
+    if(person?.email){
+      axiosPublic.get(`/get_a_user?email=${person.email}`)
+      .then(res=>setUser(res.data))
+    }
     // get poets form mongodb.
     axiosPublic.get("/authors").then((res) => setAuthor(res.data));
     // get language data.
     axios.get("/language.json").then((res) => setLanguage(res.data));
     // get catagoryes.
     axiosPublic.get("/catagoryes").then((res) => setCatagory(res.data[0]));
-  }, [axiosPublic, reload]);
+  }, [axiosPublic, reload,person]);
 
   //................ post new author.
   const addNewAuthor = (e) => {
@@ -45,11 +54,15 @@ const AddABook = () => {
     document.getElementById("my_modal_3").showModal();
   };
 
+    //  book type based form prefare.
+    const [bookType, setBooktype] = useState(null);
+
   // form submittion handle.
   // book and coverphoto url.
   const[coverPhotoUrl,setCoverPhotoUrl]=useState(null)
 
 const[pdfUrl,setPdfUrl]=useState(null)
+const[bookSize,setBookSize]=useState(null)
   const formHandle = (e) => {
     e.preventDefault();
     const validation=(value)=>{
@@ -62,8 +75,10 @@ const[pdfUrl,setPdfUrl]=useState(null)
     const form=e.target
     const banglaName=form.banglaName.value
     const englishName=form.englishName.value
-    let author=form.bookAuthor.value
-    author=validation(author)
+    let authordata=form.bookAuthor.value
+    authordata=validation(authordata)
+    const authorName=authordata?.split("/")[0]
+    const authorId=authordata?.split('/')[1]
     let catagory=form.bookCatagory.value
     catagory=validation(catagory)
     let language=form.bookLanguage.value
@@ -82,10 +97,22 @@ const[pdfUrl,setPdfUrl]=useState(null)
     summery=validation(summery)
     const coverPhoto=coverPhotoUrl
     const pdf=pdfUrl
-    console.log({banglaName,englishName,author,catagory,language,forClass,subject,country,page,edition,summery,coverPhoto,pdf})
-    form.reset()
+    // other extra field for book functionality.
+    const download=0
+    const read=0
+    const uploaderEmail=user.email
+    const publish=user.role==="superUser"||user.role==="admin"?true:false
+    const postedDate=new Date().toLocaleDateString("en-IN")
+    axiosPublic.post("/upload_a_book",{banglaName,uploaderEmail,bookType,bookSize,download,read,englishName,authorName,authorId,publish,catagory,language,forClass,subject,country,page,edition,summery,postedDate,coverPhoto,pdf})
+    .then(res=>{
+      console.log(res.data)
+      form.reset()
+    })
+    // console.log({banglaName,bookType,bookSize,download,read,englishName,authorName,authorId,publish,catagory,language,forClass,subject,country,page,edition,summery,coverPhoto,pdf})
+    
     
   };
+   
   // modal form handle.
   const imgbb = useImgUpload();
   const [authorImg, setauthroImg] = useState(null);
@@ -135,8 +162,7 @@ const[pdfUrl,setPdfUrl]=useState(null)
     });
   };
 
-  //  book type based form prefare.
-  const [bookType, setBooktype] = useState(null);
+
 
   // class names.
   const [className, setClassName] = useState([]);
@@ -174,6 +200,7 @@ const [fileComplition,setFileComplition]=useState("")
 
 const bookUrl=(e)=>{
   const bookFile=e.target.files[0]
+  setBookSize(bookFile.size)
   setBookName(bookFile?.name)
   // date and rendom number for unique name.
   const date=new Date().toLocaleDateString("en-US")
@@ -216,6 +243,7 @@ const bookUrl=(e)=>{
         <span className="text-xl font-bold">Select book type:</span>
         <div>
           <select
+          disabled={bookType}
             onChange={(e) => setBooktype(e.target.value)}
             className={inputStyle + " " + "font-bold"}
             defaultValue=""
@@ -282,7 +310,7 @@ const bookUrl=(e)=>{
                   Select Author (required)
                 </option>
                 {author.map((item, idx) => (
-                  <option value={item.name} key={idx}>
+                  <option value={item.name+"/"+item._id} key={idx}>
                     {(idx += 1)}. {item.name} ({item.englishName})
                   </option>
                 ))}

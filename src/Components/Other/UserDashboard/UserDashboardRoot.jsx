@@ -2,8 +2,12 @@ import { NavLink, Outlet } from "react-router-dom";
 import "./userDashboard.css";
 import { FaUser } from "react-icons/fa";
 import { MdOutlineAdd } from "react-icons/md";
+import swal from "sweetalert";
+import { useContext } from "react";
+import { dataProvider } from "../../context api/ContextApi";
 
 const UserDashboardRoot = () => {
+  const{person}=useContext(dataProvider)
   const li = (
     <>
       <li>
@@ -15,12 +19,12 @@ const UserDashboardRoot = () => {
         </NavLink>
       </li>
       <li>
-        <NavLink
-          className="border  w-full flex  gap-3 items-center py-[10px] font-bold px-[15px] "
+        <div className="relative overflow-hidden"> <button onClick={()=>swal("Your e-mail is not verified.", "Verify email first.", "error")} className={person?.emailVerified?"hidden":"w-full absolute top-0 left-0  h-[50px] bg-[#d9d9d9a5]"}></button><NavLink
+          className="border w-full flex  gap-3 items-center py-[10px] font-bold px-[15px] "
           to={"/User_dashboard/Add_a_book"}
         >
           <MdOutlineAdd className="text-xl" /> Add a book
-        </NavLink>
+        </NavLink></div>
       </li>
     </>
   );

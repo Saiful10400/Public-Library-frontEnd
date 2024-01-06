@@ -7,6 +7,7 @@ import {
   onAuthStateChanged,
   signInWithPopup,
   signInWithRedirect,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../../firebase";
 export const dataProvider = createContext(null);
@@ -35,16 +36,20 @@ useEffect(()=>{
     const googleAuthProvider = new GoogleAuthProvider();
     return signInWithRedirect(auth, googleAuthProvider);
   };
-  // 3.signin with e-mail and password.
+  // 3.signup with e-mail and password.
   const emailAndPasswordsignup = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);
   };
+  // 4.signin with email and password.
+  const login=(email,password)=>{
+    return signInWithEmailAndPassword(auth,email,password)
+  }
 
   const contextData = {
     logoutHandle,
     googleLoginHandle,
     emailAndPasswordsignup,
-    person,loading
+    person,loading,login
   };
   return (
     <dataProvider.Provider value={contextData}>
