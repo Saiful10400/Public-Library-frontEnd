@@ -10,6 +10,7 @@ import Login from "./Components/Other/Login & registration/Login";
 import Signup from "./Components/Other/Login & registration/Signup";
 import FakeEmailVarify from "./Components/RouteProtection/FakeEmailVarify";
 import PrivateRoute from "./Components/RouteProtection/PrivateRoute";
+import AuthorPage from "./Components/Other/Home/Components/AuthorPage";
 
 
 
@@ -30,6 +31,10 @@ export const router=createBrowserRouter([
             {
                 path:"/signup",
                 element:<Signup></Signup>
+            },
+            {
+                path:"/author/:id",
+                element:<AuthorPage></AuthorPage>
             },
             {
                 path:"/User_dashboard",

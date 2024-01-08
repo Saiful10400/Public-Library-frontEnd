@@ -106,7 +106,7 @@ const[bookSize,setBookSize]=useState(null)
     axiosPublic.post("/upload_a_book",{banglaName,uploaderEmail,bookType,bookSize,download,read,englishName,authorName,authorId,publish,catagory,language,forClass,subject,country,page,edition,summery,postedDate,coverPhoto,pdf})
     .then(res=>{
       console.log(res.data)
-      form.reset()
+      // form.reset()
     })
     // console.log({banglaName,bookType,bookSize,download,read,englishName,authorName,authorId,publish,catagory,language,forClass,subject,country,page,edition,summery,coverPhoto,pdf})
     

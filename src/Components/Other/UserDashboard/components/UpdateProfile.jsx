@@ -25,7 +25,7 @@ const UpdateProfile = () => {
         setUser(res.data);
         setLoading(false);
       });
-      axiosPublic.get("/get_my_all_books",{email:person.email})
+      axiosPublic.post("/get_my_all_books",{email:person.email})
       .then(res=>{
         const data=res.data
         const publishedBooks=data.filter(item=>item.publish===true)
@@ -34,9 +34,9 @@ const UpdateProfile = () => {
         setPendingBook(pandingBooks)
       })
     }
-    console.log("refetched.")
+    
   }, [person,refetch]);
-console.log(refetch)
+
   // user email verification handle.
   const userVarify = () => {
     if (user && person) {
@@ -174,11 +174,11 @@ console.log(refetch)
       {/* panding books. */}
       <div  className="flex items-center gap-5">
       
-        <UploadedBook refetch={refetch} reload={setRefetch} data={PublishedBook} title={"Panding books"}></UploadedBook>
+        <UploadedBook refetch={refetch} reload={setRefetch} data={pandingBook} title={"Panding books"}></UploadedBook>
       
       {/* published book. */}
       
-        <UploadedBook reload={setRefetch} data={pandingBook} title={"Published books"}></UploadedBook>
+        <UploadedBook reload={setRefetch} data={PublishedBook} title={"Published books"}></UploadedBook>
       
       </div>
       {/* modal for email confirmation. */}

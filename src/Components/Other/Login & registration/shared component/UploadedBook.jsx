@@ -47,7 +47,75 @@ const UploadedBook = ({ title, data ,reload,refetch}) => {
                 </td>
                 <td>
                   <h1 className="font-bold ">{item.banglaName}</h1>
-                  <h1>{item.authorName}</h1>
+                  <h1>author: {item.authorName?item.authorName:"N/A"}</h1>
+                </td>
+                <td>{item?.postedDate}</td>
+                <th>
+                  <button onClick={()=>{
+                    Swal.fire({
+                        title: "Want to delete?",
+                        showDenyButton: false,
+                        showCancelButton: true,
+                        confirmButtonText: "Yes",
+                        
+                      }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            axiosPublic.post("/delete_a_book",{id:item._id})
+                            .then((res)=>{
+                                if(res.data.deletedCount===1){
+                                    reload(!refetch)
+                                    Swal.fire("Deleted.", "", "success");
+                                }
+                            })
+                          
+                        } 
+                      });
+                  }} className="btn btn-warning btn-xs">Cancel</button>
+                </th>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div
+        className={
+          title === "Panding books" ? "hidden" : "mt-3 overflow-x-auto"
+        }
+      >
+        <table className="table">
+          {/* head */}
+          <thead>
+            <tr>
+              <th>
+                
+              </th>
+              <th>Cover image</th>
+              <th>Book & author name</th>
+              <th>Posted</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {data?.map((item, idx) => (
+              <tr key={idx}>
+                <th>{idx+=1}</th>
+                <td>
+                  <div className="flex items-center gap-3">
+                    <div className="avatar">
+                      <div className="mask mask-squircle w-12 h-12">
+                        <img
+                          src={item?.coverPhoto}
+                          alt="Avatar Tailwind CSS Component"
+                        />
+                      </div>
+                    </div>
+                    
+                  </div>
+                </td>
+                <td>
+                  <h1 className="font-bold ">{item.banglaName}</h1>
+                  <h1>author: {item.authorName?item.authorName:"N/A"}</h1>
                 </td>
                 <td>{item?.postedDate}</td>
                 <th>
@@ -79,7 +147,7 @@ const UploadedBook = ({ title, data ,reload,refetch}) => {
         </table>
       </div>
 
-      <ul className={title === "Panding books" ? "hidden" : "mt-3"}>
+      {/* <ul className={title === "" ? "hidden" : "mt-3"}>
         {data?.map((item, idx) => (
           <li
             className="flex justify-between bg-gray-200 rounded-xl font-bold py-2 px-4 items-center"
@@ -89,7 +157,7 @@ const UploadedBook = ({ title, data ,reload,refetch}) => {
             <button className="btn btn-sm btn-primary">Cancel</button>
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 };
