@@ -70,7 +70,7 @@ const AuthorSlide = () => {
                   />
                 </div>
                 </div>
-                <h1 className=" text-black font-semibold text-[10px] leading-[1.4] lg:text-base  mt-2 text-center">{item?.name}</h1>
+                <h1 className="  font-semibold text-[10px] leading-[1.4] lg:text-base  mt-2 text-center">{item?.name}</h1>
                 </div>
               
             </NavLink>

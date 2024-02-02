@@ -101,9 +101,12 @@ const[bookSize,setBookSize]=useState(null)
     const download=0
     const read=0
     const uploaderEmail=user.email
+    const uploaderName=user?.firstName+" "+user?.lastName
+    const uploaderPhotoUrl=user?.photoUrl
+    const uploaderId=user?._id
     const publish=user.role==="superUser"||user.role==="admin"?true:false
     const postedDate=new Date().toLocaleDateString("en-IN")
-    axiosPublic.post("/upload_a_book",{banglaName,uploaderEmail,bookType,bookSize,download,read,englishName,authorName,authorId,publish,catagory,language,forClass,subject,country,page,edition,summery,postedDate,coverPhoto,pdf})
+    axiosPublic.post("/upload_a_book",{banglaName,uploaderName,uploaderPhotoUrl,uploaderId,uploaderEmail,bookType,bookSize,download,read,englishName,authorName,authorId,publish,catagory,language,forClass,subject,country,page,edition,summery,postedDate,coverPhoto,pdf})
     .then(res=>{
       console.log(res.data)
       // form.reset()
@@ -112,7 +115,7 @@ const[bookSize,setBookSize]=useState(null)
     
     
   };
-   
+   console.log(user);
   // modal form handle.
   const imgbb = useImgUpload();
   const [authorImg, setauthroImg] = useState(null);

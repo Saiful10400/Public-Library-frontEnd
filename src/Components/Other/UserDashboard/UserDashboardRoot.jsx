@@ -35,7 +35,7 @@ const UserDashboardRoot = () => {
           <div className="lg:w-[20%] border-r-2 border-gray-300 pr-2 ">
             <ul className="flex flex-col gap-2">{li}</ul>
           </div>
-          <div className="lg:w-[80%] min-h-screen ">
+          <div className="lg:w-[80%]  min-h-screen ">
             <Outlet></Outlet>
           </div>
         </div>

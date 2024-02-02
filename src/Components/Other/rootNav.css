@@ -1,0 +1,22 @@
+.active{
+    font-size: 20px;
+    font-weight: 700;
+    position: relative;
+    color: white;
+    transition: 100ms;
+}
+.active:hover{
+     
+}
+.navlist li:hover{
+    color: white;
+}
+.active::after{
+    content: "";
+    width: 70%;
+    border-top: 2px solid #ff0000;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+
+}

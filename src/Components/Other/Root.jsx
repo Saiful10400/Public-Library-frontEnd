@@ -8,8 +8,8 @@ const Root = () => {
     const url=useLocation()
     console.log()
     return (
-        <div>
-            <div><RootNav></RootNav></div>
+        <div className='bg-[#111122]'>
+            <RootNav></RootNav>
             <div className={` mx-auto  lg:px-0 min-h-[90vh] ${url.pathname.includes("User_dashboard")?"w-full":"lg:w-[1400px] px-4"}`}>
                 <Outlet></Outlet>
             </div>

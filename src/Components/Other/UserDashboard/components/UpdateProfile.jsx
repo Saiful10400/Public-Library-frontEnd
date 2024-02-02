@@ -10,6 +10,7 @@ import gold from "../../../../../public/gold.png";
 import bronz from "../../../../../public/bronze.png";
 import { IoInformationCircle } from "react-icons/io5";
 import UploadedBook from "../../Login & registration/shared component/UploadedBook";
+import WaitingForConfirmationBook from "../../Login & registration/shared component/WaitingForConfirmationBook";
 const UpdateProfile = () => {
   const inputStyle =
     "w-full border textarea-lg lg:text-xl py-2 lg:py-3  px-3 font-normal rounded-md";
@@ -18,6 +19,8 @@ const UpdateProfile = () => {
   const [loading, setLoading] = useState(true);
   const[PublishedBook,setPUblishedBook]=useState([])
   const[pandingBook,setPendingBook]=useState([])
+  // unpublished book for admin to confirm before publish,
+  const[unpublishedBook,setUnpublishedBook]=useState([])
   const[refetch,setRefetch]=useState(false)
   useEffect(() => {
     if (person) {
@@ -34,6 +37,9 @@ const UpdateProfile = () => {
         setPendingBook(pandingBooks)
       })
     }
+    // get all unpublished book for admin confirmation.
+    axiosPublic.get("/get_unPublish_books")
+    .then(res=>setUnpublishedBook(res.data))
     
   }, [person,refetch]);
 
@@ -47,7 +53,7 @@ const UpdateProfile = () => {
   };
 
   return (
-    <div className="bg-[#f2f2f2] h-full  px-5 pt-4">
+    <div className=" bg-[#111122] h-full  px-5 pt-4">
       <div className="flex justify-evenly flex-col lg:flex-row items-center gap-7">
         {/* skleton for profile. */}
 
@@ -58,13 +64,14 @@ const UpdateProfile = () => {
         ></div>
 
         <div
-          className={`lg:w-[70%] w-full flex-col justify-center items-center lg:h-[260px] bg-white rounded-3xl p-2 ${
+          className={`lg:w-[70%] w-full flex-col justify-center items-center lg:h-[280px] bg-[#1c2229] text-white rounded-3xl p-2 ${
             !loading ? "flex" : "hidden"
           }`}
         >
           {/* image and name */}
           <div className=" w-full flex items-center flex-col lg:flex-row justify-evenly p-2 lg:p-0">
-            <div className="w-[130px] lg:w-[180px] h-[130px] lg:h-[180px] rounded-full relative">
+            <div>
+            <div className="w-[130px] lg:w-[180px] h-[130px] lg:h-[180px] rounded-full relative ">
               <img
                 className="w-full h-full object-cover rounded-full"
                 src={user?.photoUrl}
@@ -77,12 +84,14 @@ const UpdateProfile = () => {
                 }`}
               />
             </div>
+            <h1 className=" font-bold text-yellow-600 mt-4 text-center">{user?.role==="user"?"":user?.role}</h1>
+            </div>
             <div className="lg:w-[50%] w-full">
               <div>
                 <h1 className="text-base lg:text-xl font-bold mb-1">
                   Your name
                 </h1>
-                <h1 className={inputStyle + " " + "text-sm font-thin"}>
+                <h1 className={inputStyle + " " + "text-sm font-thin "}>
                   {user?.fulName
                     ? user?.fulName
                     : user?.firstName + " " + user?.lastName}
@@ -115,6 +124,7 @@ const UpdateProfile = () => {
                   </button>
                 </div>
               </div>
+              
             </div>
           </div>
         </div>
@@ -123,7 +133,7 @@ const UpdateProfile = () => {
           className={`skeleton lg:w-[30%] h-[270px] ${loading ? "" : "hidden"}`}
         ></div>
         <div
-          className={`lg:w-[30%] w-full h-[270px] bg-white rounded-3xl p-2 ${
+          className={`lg:w-[30%] w-full h-[270px] bg-[#1c2229] text-white rounded-3xl p-2 ${
             loading ? "hidden" : "flex"
           } flex-col relative justify-center items-center`}
         >
@@ -154,16 +164,16 @@ const UpdateProfile = () => {
               ? "Platinum"
               : "Diamond"}
           </h1>
-          <div className="stats lg:mt-0 mt-7">
+          <div className="stats lg:mt-0 mt-7 bg-[#303943] ">
             <div className="stat">
-              <div className="stat-title">Total Published</div>
-              <div className="stat-value text-primary text-center text-3xl lg:text-4xl">
+              <div className="stat-title text-gray-400 ">Total Published</div>
+              <div className="stat-value text-green-500 text-center text-3xl  lg:text-4xl">
                 {user?.totalBooks}
               </div>
             </div>
 
-            <div className="stat">
-              <div className="stat-title">Total panding</div>
+            <div className={user?.role==="user"?"stat":"hidden"}>
+              <div className="stat-title text-gray-400">Total panding</div>
               <div className="stat-value text-secondary text-center text-3xl lg:text-4xl">
                 {user?.pandingBooks}
               </div>
@@ -174,11 +184,20 @@ const UpdateProfile = () => {
       {/* panding books. */}
       <div  className="flex items-center gap-5">
       
+        <div className={"hidden"}>
         <UploadedBook refetch={refetch} reload={setRefetch} data={pandingBook} title={"Panding books"}></UploadedBook>
+        </div>
+        
+        {/* books waiting for confirmation. */}
+        <div className="w-full">
+          <WaitingForConfirmationBook refetch={refetch} reload={setRefetch} data={unpublishedBook}></WaitingForConfirmationBook>
+        </div>
       
       {/* published book. */}
       
-        <UploadedBook reload={setRefetch} data={PublishedBook} title={"Published books"}></UploadedBook>
+        <div className="w-full">
+        <UploadedBook reload={setRefetch} data={PublishedBook} title={"Your Published books"}></UploadedBook>
+        </div>
       
       </div>
       {/* modal for email confirmation. */}

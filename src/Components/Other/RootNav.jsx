@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { dataProvider } from "../context api/ContextApi";
-
+import"./rootNav.css"
  
 
 const RootNav = () => {
@@ -13,7 +13,7 @@ const RootNav = () => {
     const{person,logoutHandle}=useContext(dataProvider)
     
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar bg-gradient-to-b from-black to-transparent sticky top-0 z-10">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -39,14 +39,16 @@ const RootNav = () => {
             {li}
           </ul>
         </div>
-        <img className="w-[50px] rounded-full h-[50px]" src={person?.photoURL} alt="" />
-        <span>{person?.displayName}</span>
-      </div>
-      <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1 gap-5 text-md font-medium">
+        <div className=" text-2xl font-bold text-white flex items-center gap-16">
+        <div><span>Grontho</span><span className="text-[#be2f2f]">Ghor</span></div>
+        <div className="navbar-center hidden lg:flex">
+        <ul className="menu-horizontal px-1 gap-5 text-lg navlist text-gray-400 font-thin">
         {li}
         </ul>
       </div>
+        </div>
+      </div>
+      
       <div className="navbar-end">
         <a onClick={logoutHandle} className="btn">logout</a>
       </div>

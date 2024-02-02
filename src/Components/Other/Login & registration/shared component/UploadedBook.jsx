@@ -7,7 +7,7 @@ import { axiosPublic } from "../../../custom Hooks/useAxiosPublic";
 const UploadedBook = ({ title, data ,reload,refetch}) => {
   
   return (
-    <div className="h-[300px] overflow-y-scroll noScrollBar w-full rounded-2xl bg-white mt-14 pt-3 mb-7 px-4">
+    <div className="h-[300px] overflow-y-scroll noScrollBar w-full rounded-2xl bg-[#1c2229] text-white mt-14 pt-3 mb-7 px-4">
       <h1 className="text-2xl   text-center font-bold">{title}</h1>
 
       <div
