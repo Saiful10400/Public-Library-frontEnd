@@ -53,8 +53,13 @@ const RootNav = () => {
     }
   };
 
+
+  // nav bar onslide background change.
+  const[windowScroll,setWindowScroll]=useState(0)
+document.addEventListener("scroll",()=>setWindowScroll(window.pageYOffset))
+
   return (
-    <div className="navbar bg-gradient-to-b from-black to-transparent sticky top-0 z-10">
+    <div className={`navbar ${windowScroll<=50?"bg-gradient-to-b from-black to-transparent":"bg-black"} sticky top-0 z-10`}>
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
