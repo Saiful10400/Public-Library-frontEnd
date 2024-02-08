@@ -27,17 +27,17 @@ const Login = () => {
   }
   return (
     <div className="flex lg:flex-row flex-col justify-center items-center h-[90vh]">
-      <div className="bg-gray-100 rounded-3xl lg:h-[70vh] w-full flex gap-3">
-        <div className="lg:w-[40%]  bg-gray-50 lg:px-10 px-6 py-9">
+      <div className="secondaryCanvusColor rounded-3xl overflow-hidden lg:h-[70vh] w-full flex gap-3">
+        <div className="lg:w-[40%]  secondaryCanvusColor lg:px-10 px-6 py-9">
             <SharedHader data={"Login"}></SharedHader>
-          <form onSubmit={loginHadle} className="flex flex-col gap-4 mt-12">
+          <form onSubmit={loginHadle} className="flex primarytextColor flex-col gap-4 mt-12">
             <div>
-              <label className="text-xl font-bold" htmlFor="email">
+              <label className="text-xl font-medium" htmlFor="email">
                 Email address
               </label>
               <input required
                 placeholder="type email here."
-                className="w-full focus:outline-none border textarea-lg lg:text-xl py-2 lg:py-4 mt-1 px-3 font-normal rounded-md"
+                className="w-full text-black focus:outline-none border textarea-lg lg:text-xl py-2 lg:py-4 mt-1 px-3 font-normal rounded-md"
                 id="email"
                 name="email"
                 type="email"
@@ -45,17 +45,17 @@ const Login = () => {
             </div>
             <div>
               <div className="flex justify-between items-center">
-                <label className="text-xl font-bold" htmlFor="password">
+                <label className="text-xl font-medium" htmlFor="password">
                   Password
                 </label>{" "}
-                <span className="underline text-[#a274f6] font-bold">
+                <span className="underline lightPrimaryColor font-bold">
                   Foget password?
                 </span>
               </div>
               <div className="relative">
                 <input required
                   placeholder="type password here."
-                  className="w-full focus:outline-none border textarea-lg lg:text-xl py-2 lg:py-4 mt-1 px-3 font-normal rounded-md"
+                  className="w-full text-black focus:outline-none border textarea-lg lg:text-xl py-2 lg:py-4 mt-1 px-3 font-normal rounded-md"
                   id="password"
                   name="password"
                   type={passshow ? "text" : "password"}
@@ -76,7 +76,7 @@ const Login = () => {
                 </button>
               </div>
             </div>
-            <button className="btn btn-primary bg-[#893dff] text-gray-100 border-none my-6 flex items-center">
+            <button className="btn btn-primary primaryBackground text-gray-100 border-none my-6 flex items-center">
               <span>Login</span><span className={loading?"loading loading-dots loading-md":"hidden"}></span>
             </button>
           </form>

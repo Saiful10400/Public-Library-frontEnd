@@ -206,13 +206,13 @@ const[passhow,setPasshow]=useState(false)
   return (
     <div>
       <div className="flex lg:flex-row flex-col justify-center items-center h-[90vh]">
-        <div className="bg-gray-100 rounded-3xl lg:h-[70vh] w-full flex gap-3">
-          <div className="lg:w-[40%]  bg-gray-50 lg:px-10 px-6 py-9">
+        <div className="secondaryCanvusColor rounded-3xl lg:h-[70vh] w-full flex gap-3">
+          <div className="lg:w-[40%]  lg:px-10 px-6 py-9">
             <SharedHader data={"Sign up"}></SharedHader>
 
             {/* main registration containers. */}
             <div>
-              <ul className="steps gap-5 font-bold text-gray-500">
+              <ul className="steps gap-5 font-bold text-gray-600">
                 <li className={`step ${progress[0]}`}>Personal Info</li>
                 <li className={`step ${progress[1]}`}>E-mail & password </li>
                 <li className={`step ${progress[2]}`}>Profile photo</li>
@@ -318,7 +318,7 @@ const[passhow,setPasshow]=useState(false)
                       setProgress([...progress]);
                     }
                   }}
-                  className={`w-1/5 btn btn-primary ${progress.length===1? "hidden":""}`}
+                  className={`w-1/5 btn primaryBackground border-none text-white ${progress.length===1? "hidden":""}`}
                 >
                   <FaArrowLeft></FaArrowLeft>
                 </button>
@@ -340,9 +340,10 @@ const[passhow,setPasshow]=useState(false)
                       signUpHandle()
                     }
                   }}
-                  className={`${progress.length===1?"w-full":"w-4/5"} btn btn-primary`}
+                  className={`${progress.length===1?"w-full":"w-4/5"} btn btn-primary border-none text-white`}
                 >
-                  {progress.length===3?<div className="flex items-center gap-2"><span>Sign up</span><span className={signupReload?"loading loading-dots loading-md":"hidden"}></span></div>:<span className="flex gap-2">Next <FaArrowRightLong></FaArrowRightLong></span>}
+                  {progress.length===3?<div className="flex items-center gap-2"><span>Sign up</span>
+                  <span className={signupReload?"loading loading-dots loading-md":"hidden"}></span></div>:<span className="flex gap-2">Next <FaArrowRightLong></FaArrowRightLong></span>}
                 </button>
               </div>
             </div>

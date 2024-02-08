@@ -16,3 +16,23 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+.primaryBackground{
+  background-color: #d20820;
+}
+.primaryBackground:hover{
+  background-color: #f12940;
+}
+.lightPrimaryColor{
+  color: #f12940;
+}
+
+/* background colors. */
+.primaryCanvusColor{
+background-color: #111122;
+}
+.secondaryCanvusColor{
+  background-color: #1c2229;
+}
+.primarytextColor{
+  color: white;
+}
