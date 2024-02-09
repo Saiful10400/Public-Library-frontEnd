@@ -37,6 +37,9 @@ export const router=createBrowserRouter([
                 element:<AuthorPage></AuthorPage>
             },
             {
+                path:"/book/:id"
+            },
+            {
                 path:"/User_dashboard",
                 element:<PrivateRoute><UserDashboardRoot></UserDashboardRoot></PrivateRoute>,
                 children:[
