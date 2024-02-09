@@ -36,3 +36,11 @@ background-color: #111122;
 .primarytextColor{
   color: white;
 }
+.bookBody{
+/* From https://css.glass */
+background: rgba(7, 7, 7, 0.476);
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(15.8px);
+-webkit-backdrop-filter: blur(15.8px);
+border: 1px solid rgba(22, 21, 21, 0.33);
+}

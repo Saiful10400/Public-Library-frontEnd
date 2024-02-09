@@ -11,6 +11,7 @@ import Signup from "./Components/Other/Login & registration/Signup";
 import FakeEmailVarify from "./Components/RouteProtection/FakeEmailVarify";
 import PrivateRoute from "./Components/RouteProtection/PrivateRoute";
 import AuthorPage from "./Components/Other/Home/Components/AuthorPage";
+import SingleBook from "./Components/Other/SingleBook/SingleBook";
 
 
 
@@ -37,7 +38,8 @@ export const router=createBrowserRouter([
                 element:<AuthorPage></AuthorPage>
             },
             {
-                path:"/book/:id"
+                path:"/book/:id",
+                element:<SingleBook></SingleBook>
             },
             {
                 path:"/User_dashboard",
