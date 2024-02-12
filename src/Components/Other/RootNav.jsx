@@ -163,8 +163,21 @@ window.addEventListener("click",()=>setShowNotification(false))
             </span>
             
           </button>
-          <div className={`${showNotification?"w-[480px] text-white h-[650px] rounded-xl absolute top-12 bg-[#282828] right-0":"hidden"}`}>
+          <div className={`${showNotification?"w-[480px] overflow-auto text-white h-[650px] rounded-xl absolute top-12 bg-[#282828] right-0":"hidden"}`}>
               <h1 className="border-b py-2 pl-7 text-lg font-semibold text-start">Notifications</h1>
+              <ul className="grid grid-cols-1 ">
+                {
+                  userData?.notification.map((item,idx)=>{
+                    return <li className="flex hover:bg-[#4d4d4d] py-3 w-full px-3 justify-between items-center" key={idx}>
+                      
+                        <img className="h-[50px] w-[50px] rounded-full object-cover" src={item?.messageDetails?.uploaderPhotoUrl} alt="" /> 
+                         <p className="w-[60%]"><span>{item?.messageDetails?.uploaderName} uploaded:</span> {item?.message}</p> 
+                          <img className="h-[85px] w-[50px] object-cover" src={item?.messageDetails?.coverPhoto} alt="" /> 
+                      
+                    </li>
+                  })
+                }
+              </ul>
             </div>
           </div>
         ) : (
