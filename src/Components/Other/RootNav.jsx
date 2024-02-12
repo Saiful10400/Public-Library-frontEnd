@@ -3,7 +3,8 @@ import { Link, NavLink } from "react-router-dom";
 import { dataProvider } from "../context api/ContextApi";
 import "./rootNav.css";
 import { IoSearch } from "react-icons/io5";
-import { IoNotificationsSharp } from "react-icons/io5";
+import { IoNotifications } from "react-icons/io5";
+import { IoNotificationsOutline } from "react-icons/io5";
 import { axiosPublic } from "../custom Hooks/useAxiosPublic";
 
 const RootNav = () => {
@@ -30,6 +31,16 @@ const RootNav = () => {
     axiosPublic.get("/get_all_book").then((res) => setBooks(res.data));
   }, []);
 
+  // get the current user data.
+  const[userData,setUserData]=useState(null)
+  useEffect(()=>{
+    if(person?.email){
+      axiosPublic.get(`/get_a_user?email=${person?.email}`)
+      .then(res=>setUserData(res.data))
+    }
+
+  },[person,setUserData])
+console.log(userData)
   // handle search.
   const [searchedList, setSearchedList] = useState([]);
   const handleSearch = (e) => {
@@ -57,6 +68,11 @@ const RootNav = () => {
   // nav bar onslide background change.
   const[windowScroll,setWindowScroll]=useState(0)
 document.addEventListener("scroll",()=>setWindowScroll(window.pageYOffset))
+
+// notification handle.
+const[showNotification,setShowNotification]=useState(false)
+window.addEventListener("click",()=>setShowNotification(false))
+
 
   return (
     <div className={`navbar ${windowScroll<=50?"bg-gradient-to-b from-black to-transparent":"bg-black"} sticky top-0 z-10`}>
@@ -130,14 +146,27 @@ document.addEventListener("scroll",()=>setWindowScroll(window.pageYOffset))
           </div>
         </div>
         {person ? (
-          <button className=" relative">
+          <div className="relative">
+            <button onClick={(e)=>{
+              e.stopPropagation()
+              setShowNotification(!showNotification)
+            }} className=" relative">
             <span className="text-white text-[27px]">
-              <IoNotificationsSharp />
+            {
+              !showNotification?<IoNotificationsOutline />:<IoNotifications />
+            }
             </span>
-            <span className="text-white absolute bg-[#d20820] rounded-xl px-1 top-[-8px] right-[-7px] text-sm">
-              0
+            <span className="text-white font-normal absolute bg-[#d20820] rounded-xl px-1 top-[-8px] right-[-7px] text-sm">
+              {
+                userData?.notification.filter(item=>item?.visibled===false).length
+              }
             </span>
+            
           </button>
+          <div className={`${showNotification?"w-[480px] text-white h-[650px] rounded-xl absolute top-12 bg-[#282828] right-0":"hidden"}`}>
+              <h1 className="border-b py-2 pl-7 text-lg font-semibold text-start">Notifications</h1>
+            </div>
+          </div>
         ) : (
           <Link
             to={"/login"}
