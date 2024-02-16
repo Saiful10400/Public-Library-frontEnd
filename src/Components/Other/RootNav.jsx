@@ -32,15 +32,20 @@ const RootNav = () => {
   }, []);
 
   // get the current user data.
-  const[userData,setUserData]=useState(null)
-  useEffect(()=>{
-    if(person?.email){
-      axiosPublic.get(`/get_a_user?email=${person?.email}`)
-      .then(res=>setUserData(res.data))
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    if (person?.email) {
+      axiosPublic.get(`/get_a_user?email=${person?.email}`).then((res) => {
+        const notification = res.data.notification;
+        const sortedArray = [];
+        for (let i = notification.length - 1; i >= 0; i--) {
+          sortedArray.push(notification[i]);
+        }
+        setUserData(sortedArray);
+      });
     }
-
-  },[person,setUserData])
-console.log(userData)
+  }, [person, setUserData]);
+  console.log(userData);
   // handle search.
   const [searchedList, setSearchedList] = useState([]);
   const handleSearch = (e) => {
@@ -57,25 +62,60 @@ console.log(userData)
         }
       }
     });
-    if(queryWord===""){
+    if (queryWord === "") {
       setSearchedList([]);
-    }else{
-      setSearchedList(queryBook)
+    } else {
+      setSearchedList(queryBook);
     }
   };
 
-
   // nav bar onslide background change.
-  const[windowScroll,setWindowScroll]=useState(0)
-document.addEventListener("scroll",()=>setWindowScroll(window.pageYOffset))
+  const [windowScroll, setWindowScroll] = useState(0);
+  document.addEventListener("scroll", () =>
+    setWindowScroll(window.pageYOffset)
+  );
 
-// notification handle.
-const[showNotification,setShowNotification]=useState(false)
-window.addEventListener("click",()=>setShowNotification(false))
+  // notification handle.
+  const [showNotification, setShowNotification] = useState(false);
+  window.addEventListener("click", () => setShowNotification(false));
 
+  // notification date handle.
+
+  function dateCAlculate(input) {
+    let myInput = new Date(input);
+    let today = new Date();
+    let timeDifference = today - myInput;
+    timeDifference = Math.floor(timeDifference / 1000);
+
+    //  conditions
+    let seconds = timeDifference;
+    let minuts = Math.floor(seconds / 60);
+    let hours = Math.floor(minuts / 60);
+    let days = Math.floor(hours / 24);
+    let weeks = Math.floor(days / 7);
+    let months = Math.floor(days / 30);
+    let years = Math.floor(months / 12);
+
+    let time = { seconds, minuts, hours, days, weeks, months, years };
+    let timeArray = [];
+    for (let key in time) {
+      if (time[key] !== 0) {
+        timeArray.push(`${time[key]} ${key}`);
+      } else {
+        break;
+      }
+    }
+    return timeArray[timeArray.length - 1];
+  }
 
   return (
-    <div className={`navbar ${windowScroll<=50?"bg-gradient-to-b from-black to-transparent":"bg-black"} sticky top-0 z-10`}>
+    <div
+      className={`navbar ${
+        windowScroll <= 50
+          ? "bg-gradient-to-b from-black to-transparent"
+          : "bg-black"
+      } sticky top-0 z-10`}
+    >
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -134,12 +174,24 @@ window.addEventListener("click",()=>setShowNotification(false))
               {searchedList.map((item, idx) => (
                 <Link key={idx} to={item?._id}>
                   <li className="text-gray-200 hover:bg-gray-700 rounded-lg p-1">
-                  <div>
-                    <h1>{item?.banglaName}</h1>
-                     <h1 className={`text-gray-400 text-sm ${item?.forClass?"hidden":"block"}`}>{item?.authorName}</h1>
-                     <h1 className={`text-gray-400 text-sm ${item?.forClass?"block":"hidden"}`}>For class {item?.forClass}</h1>
-                  </div>
-                </li>
+                    <div>
+                      <h1>{item?.banglaName}</h1>
+                      <h1
+                        className={`text-gray-400 text-sm ${
+                          item?.forClass ? "hidden" : "block"
+                        }`}
+                      >
+                        {item?.authorName}
+                      </h1>
+                      <h1
+                        className={`text-gray-400 text-sm ${
+                          item?.forClass ? "block" : "hidden"
+                        }`}
+                      >
+                        For class {item?.forClass}
+                      </h1>
+                    </div>
+                  </li>
                 </Link>
               ))}
             </ul>
@@ -147,36 +199,68 @@ window.addEventListener("click",()=>setShowNotification(false))
         </div>
         {person ? (
           <div className="relative">
-            <button onClick={(e)=>{
-              e.stopPropagation()
-              setShowNotification(!showNotification)
-            }} className=" relative">
-            <span className="text-white text-[27px]">
-            {
-              !showNotification?<IoNotificationsOutline />:<IoNotifications />
-            }
-            </span>
-            <span className="text-white font-normal absolute bg-[#d20820] rounded-xl px-1 top-[-8px] right-[-7px] text-sm">
-              {
-                userData?.notification.filter(item=>item?.visibled===false).length
-              }
-            </span>
-            
-          </button>
-          <div className={`${showNotification?"w-[480px] overflow-auto text-white h-[650px] rounded-xl absolute top-12 bg-[#282828] right-0":"hidden"}`}>
-              <h1 className="border-b py-2 pl-7 text-lg font-semibold text-start">Notifications</h1>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowNotification(!showNotification);
+              }}
+              className=" relative"
+            >
+              <span className="text-white text-[27px]">
+                {!showNotification ? (
+                  <IoNotificationsOutline />
+                ) : (
+                  <IoNotifications />
+                )}
+              </span>
+              <span className="text-white font-normal absolute bg-[#d20820] rounded-xl px-1 top-[-8px] right-[-7px] text-sm">
+                {userData?.filter((item) => item?.visibled === false).length}
+              </span>
+            </button>
+            <div
+              className={`${
+                showNotification
+                  ? "w-[480px] overflow-auto text-white h-[650px] rounded-xl absolute top-12 bg-[#282828] right-0"
+                  : "hidden"
+              }`}
+            >
+              <h1 className="border-b py-2 pl-7 text-lg font-semibold text-start">
+                Notifications
+              </h1>
               <ul className="grid grid-cols-1 ">
-                {
-                  userData?.notification.map((item,idx)=>{
-                    return <li className="flex hover:bg-[#4d4d4d] py-3 w-full px-3 justify-between items-center" key={idx}>
-                      
-                        <img className="h-[50px] w-[50px] rounded-full object-cover" src={item?.messageDetails?.uploaderPhotoUrl} alt="" /> 
-                         <p className="w-[60%]"><span>{item?.messageDetails?.uploaderName} uploaded:</span> {item?.message}</p> 
-                          <img className="h-[85px] w-[50px] object-cover" src={item?.messageDetails?.coverPhoto} alt="" /> 
-                      
+                {userData?.map((item, idx) => {
+                  return (
+                   <Link to={`/book/${item?.messageDetails?._id}`}   key={idx}>
+                     <li
+                      className="flex hover:bg-[#4d4d4d] py-3 w-full px-3 justify-between items-center"
+                     
+                    >
+                      <img
+                        className="h-[50px] w-[50px] rounded-full object-cover"
+                        src={item?.messageDetails?.uploaderPhotoUrl}
+                        alt=""
+                      />
+                      <div className="w-[60%]">
+                        <p>
+                          <span>
+                            {item?.messageDetails?.uploaderName} uploaded:
+                          </span>{" "}
+                          {item?.message}
+                        </p>
+                        <h1 className="text-[13px] font-bold text-gray-400 mt-4">
+                          {dateCAlculate(item?.messageDetails?.postedDate)} ago
+                        </h1>
+                      </div>
+
+                      <img
+                        className="h-[85px] w-[50px] rounded-sm object-cover"
+                        src={item?.messageDetails?.coverPhoto}
+                        alt=""
+                      />
                     </li>
-                  })
-                }
+                   </Link>
+                  );
+                })}
               </ul>
             </div>
           </div>

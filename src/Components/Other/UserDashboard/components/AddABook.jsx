@@ -105,7 +105,7 @@ const[bookSize,setBookSize]=useState(null)
     const uploaderPhotoUrl=user?.photoUrl
     const uploaderId=user?._id
     const publish=user.role==="superUser"||user.role==="admin"?true:false
-    const postedDate=new Date().toLocaleDateString("en-IN")
+    const postedDate=new Date()
     axiosPublic.post("/upload_a_book",{banglaName,uploaderName,uploaderPhotoUrl,uploaderId,uploaderEmail,bookType,bookSize,download,read,englishName,authorName,authorId,publish,catagory,language,forClass,subject,country,page,edition,summery,postedDate,coverPhoto,pdf})
     .then(res=>{
       console.log(res.data)

@@ -8,6 +8,7 @@ import "react-tabs/style/react-tabs.css";
 import { dataProvider } from "../../context api/ContextApi";
 import { FaPlus } from "react-icons/fa6";
 import { MdOutlineCancel } from "react-icons/md";
+import Review from "./Review";
 const SingleBook = () => {
   const { id } = useParams();
 
@@ -17,7 +18,7 @@ const SingleBook = () => {
   const [isFollowing, setIsFollowing] = useState(null);
   const [reload, setReload] = useState(false);
   const { person } = useContext(dataProvider);
-  
+
   useEffect(() => {
     if (id) {
       axiosPublic.get(`/get_a_book?id=${id}`).then((res) => {
@@ -66,21 +67,28 @@ const SingleBook = () => {
       return <Navigate to={"/login"}></Navigate>;
     }
   };
- 
-const unFilterdebookkeys=bookData&&Object.keys(bookData)
-let FilteredBookKeys=[] 
-if(bookData){
-  unFilterdebookkeys.map(item=>{
-    if(item==="_id"|| item==="authorId" ||item==="reviewComments" || item==="rating"||item==="summery"||item==="pdf"||item==="coverPhoto"||item==="publish"){
-      // "don't do anything."
-    }
-    else{
-      FilteredBookKeys.push(item)
-    }
-  })
-}
-console.log(bookData)
 
+  const unFilterdebookkeys = bookData && Object.keys(bookData);
+  let FilteredBookKeys = [];
+  if (bookData) {
+    unFilterdebookkeys.map((item) => {
+      if (
+        item === "_id" ||
+        item === "authorId" ||
+        item === "reviewComments" ||
+        item === "rating" ||
+        item === "summery" ||
+        item === "pdf" ||
+        item === "coverPhoto" ||
+        item === "publish"
+      ) {
+        // "don't do anything."
+      } else {
+        FilteredBookKeys.push(item);
+      }
+    });
+  }
+  console.log(bookData);
 
   return (
     <div className="min-h-[60vh] relative">
@@ -189,20 +197,33 @@ console.log(bookData)
               </div>
             </div>
           </TabPanel>
-          <TabPanel >
+          <TabPanel>
             <table className="w-full">
-                <tbody>
-                  {
-                    FilteredBookKeys?.map((item,idx)=><tr className={`${bookData[item]===null||bookData[item]===""?"hidden":""}`} key={idx}>
-                    <td className="border w-[30%]">{item}</td>
-                    <td className="border w-[70%]">{item==="bookSize"?(bookData[item]*0.000001).toFixed(2)+""+"MB":bookData[item]}</td>
-                </tr>)
-                }
-                </tbody>
+              <tbody>
+                {FilteredBookKeys?.map((item, idx) => (
+                  <tr
+                    className={`${
+                      bookData[item] === null || bookData[item] === ""
+                        ? "hidden"
+                        : ""
+                    }`}
+                    key={idx}
+                  >
+                    <td className="border w-[30%] bg-[#3b3b3b] px-2 py-3 font-bold">{item}</td>
+                    <td className="border w-[70%] font-semibold pl-2">
+                      {item === "bookSize"
+                        ? (bookData[item] * 0.000001).toFixed(2) + " " + "MB"
+                        : bookData[item]}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </TabPanel>
         </Tabs>
       </div>
+      {/* review section. */}
+      <Review></Review>
     </div>
   );
 };
